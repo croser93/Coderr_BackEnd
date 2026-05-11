@@ -56,3 +56,20 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account.save()
         UserProfile.objects.create(user=account, type=user_type)
         return account
+    
+class LoginSerializer(serializers.ModelSerializer):
+
+
+    
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = [ 'email', 'password']
+
+    def validate(self, data):
+        user_email = User.objects.filter(email=data['email']).first()
+        if user_email and user_email.check_password(data['password']):
+            return{'user' :user_email}
+        raise serializers.ValidationError({'error': 'wrong credentials'})
