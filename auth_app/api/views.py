@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from .serializers import RegistrationSerializer, LoginSerializer
 from rest_framework.authtoken.models import Token
@@ -8,6 +8,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework import status
 
 class RegistrationView(APIView):
+    permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = RegistrationSerializer(data=request.data)
@@ -28,7 +29,8 @@ class RegistrationView(APIView):
     
 
 class LoginView(APIView):
-
+    permission_classes = [AllowAny]
+    
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
 
