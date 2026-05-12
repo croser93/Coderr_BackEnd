@@ -32,5 +32,18 @@ class ProfileDetailView(APIView):
             return Response(serializer.errors, status=400)
         except ProfileModel.DoesNotExist:
             return Response ({"error" : "Das Benutzerprofil wurde nicht gefunden."}, status=404)
+        
+class ProfileCustomerListView(APIView):
+    
+    def get(self, request):
+        profile_list = ProfileModel.objects.filter(user__profile__type="customer")
+        serializer = ProfileSerializer(profile_list, many=True)
+        return Response (serializer.data)
 
         
+class ProfileBusinessListView(APIView):
+    
+    def get(self, request):
+        profile_list = ProfileModel.objects.filter(user__profile__type="business")
+        serializer = ProfileSerializer(profile_list, many=True)
+        return Response (serializer.data)
