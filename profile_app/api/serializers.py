@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from profile_app.models import ProfileModel
 
-class ProfileListSerializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
     
 
     user = serializers.IntegerField (source='user.id', read_only=True)

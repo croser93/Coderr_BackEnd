@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class ProfileModel(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE,  related_name='profile' )
+    user = models.OneToOneField(User,on_delete=models.CASCADE,  related_name='profile_detail' )
     file = models.ImageField(upload_to='profiles/', blank=True, null=True)
     location = models.CharField(max_length=100)
     tel = models.CharField(max_length=20, blank=True)
