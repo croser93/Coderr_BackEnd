@@ -52,5 +52,11 @@ class OfferGetSerializer(serializers.ModelSerializer):
         return [{
             'id': detail.id,
             'url': f'/offerdetails/{detail.id}/'} for detail in obj.details.all()]
+    
+class OfferDetailSerializer(OfferGetSerializer):
+    id = serializers.IntegerField(read_only=True)
+    class Meta:
+        model = OfferModel
+        fields = ['id', 'user', 'title', 'image', 'description', 'created_at', 'updated_at', 'details', 'min_price', 'min_delivery_time']
 
     

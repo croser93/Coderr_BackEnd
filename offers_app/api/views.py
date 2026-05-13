@@ -2,7 +2,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import OfferPostSerializer, OfferGetSerializer
+from .serializers import OfferPostSerializer, OfferGetSerializer, OfferDetailSerializer
 from offers_app.models import OfferModel
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsBusinessUserOrAdmin
@@ -30,6 +30,38 @@ class OfferListView(APIView):
         offer = OfferModel.objects.all()
         serializer = OfferGetSerializer(offer, many=True)
         return Response (serializer.data)
+
+class OfferDetailView(APIView):
+
+    permission_classes = [IsAuthenticated, IsBusinessUserOrAdmin]
+
+    def get(self, request, pk):
+        offer = OfferModel.objects.get(pk=pk)
+        serializer = OfferDetailSerializer(offer)
+        return Response (serializer.data)
+    
+    def patch(self, request, pk):
+        try:
+            offer = OfferModel.objects.get(pk=pk)
+            self.check_object_permissions(request, offer)
+            serializer = OfferDetailSerializer(offer, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response (serializer.data, status=200)
+            return Response ({"error" : "Ungültige Anfragedaten oder unvollständige Details."}, status=400)
+        except OfferModel.DoesNotExist:
+            return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
+        
+    def delete(self, request, pk):
+        try:
+            offer = OfferModel.objects.get(pk=pk)
+            self.check_object_permissions(request, offer)
+            offer.delete()
+            return Response ({"error" : "Das Angebot wurde erfolgreich gelöscht."}, status=204)
+        except:
+            return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
+        
+        
 
 
 
