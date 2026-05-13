@@ -9,4 +9,7 @@ class UserOrAdmin(BasePermission):
         elif request.method =='DELETE':
             return bool(request.user and request.user.is_superuser)
 
-        
+class IsBusinessUserOrAdmin(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.method == 'POST':
+            return bool(request.user and (request.user.is_superuser or request.user.profile.type == 'business'))
