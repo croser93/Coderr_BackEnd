@@ -4,6 +4,9 @@ class OfferModel(models.Model):
     title = models.CharField(max_length=100)
     image = models.ImageField(upload_to='offer_image/', blank=True, null=True)
     description = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.title
 class DetailModel(models.Model):
     offer = models.ForeignKey(OfferModel, on_delete=models.CASCADE, related_name='details')
     title = models.CharField(max_length=100)
@@ -13,3 +16,5 @@ class DetailModel(models.Model):
     features = models.JSONField()
     offer_type = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.title
