@@ -60,3 +60,8 @@ class OfferDetailSerializer(OfferGetSerializer):
         fields = ['id', 'user', 'title', 'image', 'description', 'created_at', 'updated_at', 'details', 'min_price', 'min_delivery_time']
 
     
+class OfferDetailsIdSerializer(DetailSerializer):
+    
+    class Meta:
+        model = DetailModel
+        fields = ['id','title', 'revisions', 'delivery_time_in_days', 'price', 'features', 'offer_type']

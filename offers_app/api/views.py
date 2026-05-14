@@ -2,8 +2,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import OfferPostSerializer, OfferGetSerializer, OfferDetailSerializer
-from offers_app.models import OfferModel
+from .serializers import OfferPostSerializer, OfferGetSerializer, OfferDetailSerializer, OfferDetailsIdSerializer
+from offers_app.models import OfferModel, DetailModel
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsBusinessUserOrAdmin
 
@@ -12,8 +12,7 @@ from .permissions import IsBusinessUserOrAdmin
 class OfferListView(APIView):
 
     permission_classes = [IsAuthenticated, IsBusinessUserOrAdmin]
-
-    
+  
     def post(self, request):
         try:
             serializer = OfferPostSerializer(data=request.data)
@@ -27,18 +26,24 @@ class OfferListView(APIView):
          return Response({'error':'Authentifizierter Benutzer ist kein `business` Profil'}, status=403)
         
     def get(self, request):
-        offer = OfferModel.objects.all()
-        serializer = OfferGetSerializer(offer, many=True)
-        return Response (serializer.data)
+        try:
+            offer = OfferModel.objects.all()
+            serializer = OfferGetSerializer(offer, many=True)
+            return Response (serializer.data)
+        except OfferModel.DoesNotExist:
+            return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
 
 class OfferDetailView(APIView):
 
     permission_classes = [IsAuthenticated, IsBusinessUserOrAdmin]
 
     def get(self, request, pk):
-        offer = OfferModel.objects.get(pk=pk)
-        serializer = OfferDetailSerializer(offer)
-        return Response (serializer.data)
+        try:
+            offer = OfferModel.objects.get(pk=pk)
+            serializer = OfferDetailSerializer(offer)
+            return Response (serializer.data)
+        except OfferModel.DoesNotExist:
+            return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
     
     def patch(self, request, pk):
         try:
@@ -57,11 +62,21 @@ class OfferDetailView(APIView):
             offer = OfferModel.objects.get(pk=pk)
             self.check_object_permissions(request, offer)
             offer.delete()
-            return Response ({"error" : "Das Angebot wurde erfolgreich gelöscht."}, status=204)
-        except:
+            return Response (status=204)
+        except OfferModel.DoesNotExist:
             return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
         
         
+class OfferDetailsIdView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, pk):
+        try:
+            offer_detail = DetailModel.objects.get(pk=pk)
+            serializer = OfferDetailsIdSerializer(offer_detail)
+            return Response(serializer.data, status=200)
+        except DetailModel.DoesNotExist:
+            return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
 
 
 
