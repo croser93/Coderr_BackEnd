@@ -6,12 +6,13 @@ from .serializers import OfferPostSerializer, OfferGetSerializer, OfferDetailSer
 from offers_app.models import OfferModel, DetailModel
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsBusinessUserOrAdmin
-
+from .pagination import LargeResultsSetPagination
 
 
 class OfferListView(APIView):
 
     permission_classes = [IsAuthenticated, IsBusinessUserOrAdmin]
+    pagination_class = LargeResultsSetPagination
   
     def post(self, request):
         try:
@@ -28,8 +29,10 @@ class OfferListView(APIView):
     def get(self, request):
         try:
             offer = OfferModel.objects.all()
-            serializer = OfferGetSerializer(offer, many=True)
-            return Response (serializer.data)
+            paginator = self.pagination_class()
+            result_page = paginator.paginate_queryset(offer, request)
+            serializer = OfferGetSerializer(result_page, many=True)
+            return paginator.get_paginated_response(serializer.data)
         except OfferModel.DoesNotExist:
             return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
 
