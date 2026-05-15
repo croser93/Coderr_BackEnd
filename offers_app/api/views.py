@@ -31,27 +31,6 @@ class OfferListView(generics.ListCreateAPIView):
             return OfferPostSerializer
         return OfferGetSerializer
   
-    # def post(self, request):
-    #     try:
-    #         serializer = OfferPostSerializer(data=request.data)
-    #         self.check_permissions(request, serializer)
-    #         if serializer.is_valid():
-    #             saved_offer = serializer.save(user=request.user)
-    #             return Response(OfferPostSerializer(saved_offer).data, status=201)
-    #         else:
-    #             return Response(serializer.errors, status=400)
-    #     except: 
-    #      return Response({'error':'Authentifizierter Benutzer ist kein `business` Profil'}, status=403)
-        
-    # def get(self, request):
-    #     try:
-    #         offer = OfferModel.objects.all()
-    #         paginator = self.pagination_class()
-    #         result_page = paginator.paginate_queryset(offer, request)
-    #         serializer = OfferGetSerializer(result_page, many=True)
-    #         return paginator.get_paginated_response(serializer.data)
-    #     except OfferModel.DoesNotExist:
-    #         return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
         
 class OfferDetailView(APIView):
 
@@ -85,8 +64,7 @@ class OfferDetailView(APIView):
             return Response (status=204)
         except OfferModel.DoesNotExist:
             return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
-        
-        
+           
 class OfferDetailsIdView(APIView):
     permission_classes = [IsAuthenticated]
     
