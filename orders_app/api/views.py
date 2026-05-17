@@ -31,3 +31,22 @@ class OrderDetailView(APIView):
             return Response (serializer.data)
         except OrdersModel.DoesNotExist:
             return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
+        
+    def patch(self, request, pk):
+        try:
+            order = OrdersModel.objects.get(pk=pk)
+            serializer = OrdersSerializer(order, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response (serializer.data, status=200)
+            return Response ({"error" : "Ungültige Anfragedaten oder unvollständige Details."}, status=400)
+        except OrdersModel.DoesNotExist:
+            return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
+        
+    def delete(self, request, pk):
+        try:
+            order = OrdersModel.objects.get(pk=pk)
+            order.delete()
+            return Response (status=204)
+        except OrdersModel.DoesNotExist:
+            return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
