@@ -6,23 +6,38 @@ from .serializers import OrdersSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
+from .permissions import IsBusinessUserOrAdmin, IsCustomerUserOrAdmin
+from offers_app.models import DetailModel
 
 
 
-class OrderListView(generics.ListCreateAPIView):
 
-    queryset = OrdersModel.objects.all()
-    serializer_class = OrdersSerializer
-    permission_classes = [IsAuthenticated]
+class OrderListView(APIView):
+
+    permission_classes = [IsAuthenticated, IsCustomerUserOrAdmin]
     authentication_classes = [TokenAuthentication]
 
-    def perform_create(self, serializer):
-        serializer.save(customer_user=self.request.user)
+    def post(self, request):
+        try:
+            serializer = OrdersSerializer(data=request.data)
+            self.check_object_permissions(request, request)
+            if serializer.is_valid():
+                serializer.save(customer_user=self.request.user)
+                return Response (serializer.data, status=201)  
+            else:
+              return Response ({"error" : "Ungültige Anfragedaten."}, status=400)  
+        except DetailModel.DoesNotExist:
+            return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
 
+
+    def get(self, request):
+        order = OrdersModel.objects.all()
+        serializer = OrdersSerializer(order, many=True)
+        return Response (serializer.data, status=200)
 
 class OrderDetailView(APIView):
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsBusinessUserOrAdmin]
 
     def get(self, request, pk):
         try:
@@ -35,6 +50,7 @@ class OrderDetailView(APIView):
     def patch(self, request, pk):
         try:
             order = OrdersModel.objects.get(pk=pk)
+            self.check_object_permissions(request, order)
             serializer = OrdersSerializer(order, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -46,12 +62,14 @@ class OrderDetailView(APIView):
     def delete(self, request, pk):
         try:
             order = OrdersModel.objects.get(pk=pk)
+            self.check_object_permissions(request, order)
             order.delete()
             return Response (status=204)
         except OrdersModel.DoesNotExist:
             return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
         
 class BusinessUserCountView(APIView):
+    permission_classes = [ IsAuthenticated]
     
     def get(self, request, business_user_id):
         try:
@@ -65,7 +83,8 @@ class BusinessUserCountView(APIView):
             return Response ({"error" : "Kein Geschäftsnutzer mit der angegebenen ID gefunden."}, status=404)
         
 class BusinessUserCountCompletedView(APIView):
-    
+    permission_classes = [ IsAuthenticated]
+
     def get(self, request, business_user_id):
         try:
             user = User.objects.get(pk=business_user_id)
