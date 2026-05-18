@@ -43,7 +43,9 @@ class OfferListView(generics.ListCreateAPIView):
         if ordering == 'min_price':
             queryset = queryset.order_by('details__price')
         return queryset
-  
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
         
 class OfferDetailView(APIView):
