@@ -5,6 +5,7 @@ from orders_app.models import OrdersModel
 from .serializers import OrdersSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.contrib.auth.models import User
 
 
 
@@ -24,7 +25,6 @@ class OrderDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
-
         try:
             order = OrdersModel.objects.get(pk=pk)
             serializer = OrdersSerializer(order)
@@ -50,3 +50,16 @@ class OrderDetailView(APIView):
             return Response (status=204)
         except OrdersModel.DoesNotExist:
             return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
+        
+class BusinessUserCountView(APIView):
+    
+    def get(self, request, business_user_id):
+        try:
+            user = User.objects.get(pk=business_user_id)
+            if user.profile.type == 'business':
+                order_count = OrdersModel.objects.filter(business_user_id = business_user_id, status='in_progress').count()
+                return Response({ "order_count": order_count})
+            else:
+                return Response ({"error" : "Kein Geschäftsnutzer mit der angegebenen ID gefunden."}, status=404)
+        except User.DoesNotExist:
+            return Response ({"error" : "Kein Geschäftsnutzer mit der angegebenen ID gefunden."}, status=404)

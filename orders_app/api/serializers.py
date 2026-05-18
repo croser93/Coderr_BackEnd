@@ -26,3 +26,4 @@ class OrdersSerializer(serializers.ModelSerializer):
             status='in_progress',
         )
         return order
+    
