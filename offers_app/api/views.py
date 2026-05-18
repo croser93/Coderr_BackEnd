@@ -10,6 +10,7 @@ from .permissions import IsBusinessUserOrAdmin
 from .pagination import LargeResultsSetPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from .filters import OfferFilter
 
 
 
@@ -19,17 +20,21 @@ class OfferListView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated, IsBusinessUserOrAdmin]
     pagination_class = LargeResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    
-    filterset_fields = ['creator_id', 'min_price', 'max_delivery_time']
+    filterset_class = OfferFilter
     search_fields = ['title', 'description']
-    ordering_fields = ['updated_at', 'min_price']
-    ordering = ['updated_at', 'min_price' ]
-
-
+    ordering_fields = ['updated_at']
+    
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return OfferPostSerializer
         return OfferGetSerializer
+    
+    def get_queryset(self):
+        queryset = OfferModel.objects.all()
+        ordering = self.request.query_params.get('ordering')
+        if ordering == 'min_price':
+            queryset = queryset.order_by('details__price')
+        return queryset
   
         
 class OfferDetailView(APIView):
