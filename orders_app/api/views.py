@@ -63,3 +63,16 @@ class BusinessUserCountView(APIView):
                 return Response ({"error" : "Kein Geschäftsnutzer mit der angegebenen ID gefunden."}, status=404)
         except User.DoesNotExist:
             return Response ({"error" : "Kein Geschäftsnutzer mit der angegebenen ID gefunden."}, status=404)
+        
+class BusinessUserCountCompletedView(APIView):
+    
+    def get(self, request, business_user_id):
+        try:
+            user = User.objects.get(pk=business_user_id)
+            if user.profile.type == 'business':
+                order_count = OrdersModel.objects.filter(business_user_id = business_user_id, status='completed').count()
+                return Response({ "completed_order_count": order_count})
+            else:
+                return Response ({"error" : "Kein Geschäftsnutzer mit der angegebenen ID gefunden."}, status=404)
+        except User.DoesNotExist:
+            return Response ({"error" : "Kein Geschäftsnutzer mit der angegebenen ID gefunden."}, status=404)
