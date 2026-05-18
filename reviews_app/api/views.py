@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 # from .permissions import IsBusinessUserOrAdmin, IsCustomerUserOrAdmin
-from .serializer import ReviewModel
+from .serializer import ReviewSerializer
 from reviews_app.models import ReviewModel
 
 
@@ -17,10 +17,10 @@ class ReviewListView(APIView):
 
     def post(self, request):
         try:
-            serializer = ReviewModel(data=request.data)
-            self.check_object_permissions(request, request)
+            serializer = ReviewSerializer(data=request.data)
+            # self.check_object_permissions(request, request)
             if serializer.is_valid():
-                serializer.save(customer_user=self.request.user)
+                serializer.save(reviewer=self.request.user)
                 return Response (serializer.data, status=201)  
             else:
               return Response ({"error" : "Ungültige Anfragedaten."}, status=400)  
@@ -29,6 +29,6 @@ class ReviewListView(APIView):
 
 
     def get(self, request):
-        order = ReviewModel.objects.all()
-        serializer = ReviewModel(order, many=True)
+        review = ReviewModel.objects.all()
+        serializer = ReviewSerializer(review, many=True)
         return Response (serializer.data, status=200)
