@@ -13,9 +13,12 @@ class IsBusinessUserOrAdmin(BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method == 'GET':
             return True
-        elif request.method == 'POST':
-            return bool(request.user and (request.user.is_superuser or request.user.profile.type == 'business'))
         elif request.method == 'PATCH':
             return bool(request.user and (request.user.is_superuser or request.user == obj.user))
         elif request.method == 'DELETE':
             return bool(request.user and (request.user.is_superuser or request.user == obj.user))
+    
+    def has_permission(self, request, view):
+        if request.method == 'POST':
+            return bool(request.user and (request.user.is_superuser or request.user.profile.type == 'business'))
+        return True

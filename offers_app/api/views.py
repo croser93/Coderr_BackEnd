@@ -10,6 +10,8 @@ from .permissions import IsBusinessUserOrAdmin
 from .pagination import LargeResultsSetPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from .filters import OfferFilter
+from rest_framework.exceptions import ValidationError
 
 
 
@@ -19,18 +21,32 @@ class OfferListView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated, IsBusinessUserOrAdmin]
     pagination_class = LargeResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    
-    filterset_fields = ['creator_id', 'min_price', 'max_delivery_time']
+    filterset_class = OfferFilter
     search_fields = ['title', 'description']
-    ordering_fields = ['updated_at', 'min_price']
-    ordering = ['updated_at', 'min_price' ]
-
+    ordering_fields = ['updated_at']
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return OfferPostSerializer
         return OfferGetSerializer
-  
+    
+    def get_validation_param(self):
+        allowed_params = {'creator_id', 'min_price', 'max_delivery_time', 'ordering', 'search', 'page_size', 'page'}
+        return set(self.request.query_params.keys()) - allowed_params
+    
+    def get_queryset(self):
+        if self.get_validation_param():
+            raise ValidationError({'error': 'Ungültige Parameter.'})
+        
+        queryset = OfferModel.objects.all()
+        ordering = self.request.query_params.get('ordering')
+        if ordering == 'min_price':
+            queryset = queryset.order_by('details__price')
+        return queryset
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
         
 class OfferDetailView(APIView):
 
