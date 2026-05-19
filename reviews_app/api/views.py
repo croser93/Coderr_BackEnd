@@ -32,3 +32,34 @@ class ReviewListView(APIView):
         review = ReviewModel.objects.all()
         serializer = ReviewSerializer(review, many=True)
         return Response (serializer.data, status=200)
+
+
+class ReviewDetailView(APIView):
+    
+    def get(self, request, pk):
+        try:
+            review = ReviewModel.objects.get(pk=pk)
+            serializer = ReviewSerializer(review)
+            return Response(serializer.data, status=200)
+        except ReviewModel.DoesNotExist:
+            return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
+        
+    def patch(self, request, pk):
+        try:
+            review = ReviewModel.objects.get(pk=pk)
+            serializer = ReviewSerializer(review, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=200)
+            return Response ({"error" : "Bad Request. Der Anfrage-Body enthält ungültige Daten.."}, status=400)
+                
+        except ReviewModel.DoesNotExist:
+            return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
+        
+    def delete(self,request, pk):
+        try:
+            review = ReviewModel.objects.get(pk=pk)
+            review.delete()
+            return Response(status=204)
+        except ReviewModel.DoesNotExist:
+            return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
