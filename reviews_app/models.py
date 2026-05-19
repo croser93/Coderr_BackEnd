@@ -11,4 +11,4 @@ class ReviewModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.reviewer
+        return self.reviewer.username
