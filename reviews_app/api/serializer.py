@@ -10,9 +10,10 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only_fields = ['reviewer']
 
     def validate(self, data):
-        if ReviewModel.objects.filter(reviewer=self.context['request'].user, business_user=data['business_user']).exists():
-            raise serializers.ValidationError({'error': 'Du hast diesen Business-User bereits bewertet.'})
+        request = self.context.get('request')
+        if request and request.method == 'POST':
+            if ReviewModel.objects.filter(reviewer=request.user, business_user=data['business_user']).exists():
+                raise serializers.ValidationError({'error': 'Du hast diesen Business-User bereits bewertet.'})
         return data
-    
    
     

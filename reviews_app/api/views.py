@@ -1,7 +1,5 @@
-from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-# from .serializers import OrdersSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
@@ -36,18 +34,11 @@ class ReviewListView(APIView):
 class ReviewDetailView(APIView):
 
     permission_classes = [IsAuthenticated, UserOrAdmin]
-    
-    def get(self, request, pk):
-        try:
-            review = ReviewModel.objects.get(pk=pk)
-            serializer = ReviewSerializer(review)
-            return Response(serializer.data, status=200)
-        except ReviewModel.DoesNotExist:
-            return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
         
     def patch(self, request, pk):
         try:
             review = ReviewModel.objects.get(pk=pk)
+            self.check_object_permissions(request, review)
             serializer = ReviewSerializer(review, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -55,12 +46,13 @@ class ReviewDetailView(APIView):
             return Response ({"error" : "Bad Request. Der Anfrage-Body enthält ungültige Daten.."}, status=400)
                 
         except ReviewModel.DoesNotExist:
-            return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
+            return Response ({"error" : "Nicht gefunden. Es wurde keine Bewertung mit der angegebenen ID gefunden."}, status=404)
         
-    def delete(self,request, pk):
+    def delete(self, request, pk):
         try:
             review = ReviewModel.objects.get(pk=pk)
+            self.check_object_permissions(request, review)
             review.delete()
             return Response(status=204)
         except ReviewModel.DoesNotExist:
-            return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
+            return Response ({"error" : "Nicht gefunden. Es wurde keine Bewertung mit der angegebenen ID gefunden."}, status=404)
