@@ -48,7 +48,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
         account = User(
             email = email,
-            username = first_name + '-' + last_name,
+            username = first_name + ' ' + last_name,
             first_name = first_name,
             last_name = last_name,
         )
@@ -61,15 +61,15 @@ class RegistrationSerializer(serializers.ModelSerializer):
     
 class LoginSerializer(serializers.ModelSerializer):
 
-    email = serializers.EmailField()
+    username = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = [ 'email', 'password']
+        fields = [ 'username', 'password']
 
     def validate(self, data):
-        user_email = User.objects.filter(email=data['email']).first()
-        if user_email and user_email.check_password(data['password']):
-            return{'user' :user_email}
+        username = User.objects.filter(username=data['username']).first()
+        if username and username.check_password(data['password']):
+            return{'user' :username}
         raise serializers.ValidationError({'error': 'wrong credentials'})
