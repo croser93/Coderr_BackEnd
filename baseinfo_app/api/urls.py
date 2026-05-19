@@ -3,6 +3,6 @@ from .views import BaseInfoView
 
 
 urlpatterns = [
-     path('base-info/', BaseInfoView.as_view(), name='reviews'),
+     path('base-info/', BaseInfoView.as_view(), name='base_info'),
 
 ]
