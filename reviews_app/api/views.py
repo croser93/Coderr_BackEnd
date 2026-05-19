@@ -5,25 +5,24 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-# from .permissions import IsBusinessUserOrAdmin, IsCustomerUserOrAdmin
+from .permissions import UserOrAdmin, IsCustomerUserOrAdmin
 from .serializer import ReviewSerializer
 from reviews_app.models import ReviewModel
 
 
 class ReviewListView(APIView):
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsCustomerUserOrAdmin]
     authentication_classes = [TokenAuthentication]
 
     def post(self, request):
         try:
-            serializer = ReviewSerializer(data=request.data)
-            # self.check_object_permissions(request, request)
+            serializer = ReviewSerializer(data=request.data, context={'request': request})
             if serializer.is_valid():
                 serializer.save(reviewer=self.request.user)
                 return Response (serializer.data, status=201)  
             else:
-              return Response ({"error" : "Ungültige Anfragedaten."}, status=400)  
+              return Response ({"error" : "Fehlerhafte Anfrage. Der Benutzer hat möglicherweise bereits eine Bewertung für das gleiche Geschäftsprofil abgegeben."}, status=400)  
         except ReviewModel.DoesNotExist:
             return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
 
@@ -35,6 +34,8 @@ class ReviewListView(APIView):
 
 
 class ReviewDetailView(APIView):
+
+    permission_classes = [IsAuthenticated, UserOrAdmin]
     
     def get(self, request, pk):
         try:
