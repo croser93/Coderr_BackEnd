@@ -14,14 +14,13 @@ class LoginTest(APITestCase):
             'email':'testuser@test.de',
             'password':'123456'
         }
+
         response = self.client.post(url, data)
+        self.assertIsInstance(response.data['token'], str)
+        self.assertEqual(response.data['email'], self.user.email)
+        self.assertEqual(response.data['username'], self.user.username)
+        self.assertIsInstance(response.data['user_id'], int)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('token', response.data)
-
-class BadLoginTest(APITestCase):
-
-    def setUp(self):
-        self.user = User.objects.create_user(email='testuser@test.de', password='123456', username='testuser')
 
     def test_bad_login_400(self):
         url = reverse('login')

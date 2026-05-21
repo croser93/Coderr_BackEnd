@@ -14,8 +14,11 @@ class RegistrationTest(APITestCase):
             "type": "customer"
         }
         response = self.client.post(url, data)
+        self.assertIsInstance(response.data['user_id'], int)
+        self.assertEqual(response.data['username'], data['username'])
+        self.assertEqual(response.data['email'], data['email'])
+        self.assertIsInstance(response.data['token'], str)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn('token', response.data)
         
 
 class BadRegistrationTest(APITestCase):

@@ -14,8 +14,8 @@ class LogoutTest(APITestCase):
         url = reverse('logout')
         response = self.client.post(url)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(Token.objects.filter(user=self.user).exists())
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 
