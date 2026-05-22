@@ -16,3 +16,11 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileModel
         fields= ["user", "username", "first_name", "last_name", "file", "location", "tel", "description", "working_hours", "type", "email", "created_at"]
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user', {})
+        if user_data:
+            for attr, value in user_data.items():
+                setattr(instance.user, attr, value)
+            instance.user.save()
+        return super().update(instance, validated_data)
