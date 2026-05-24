@@ -30,7 +30,7 @@ class ReviewsTest(APITestCase):
             offer_type='basic',
             status='in_progress'
             )
-        self.reviews = ReviewModel.objects.create( business_user=self.business_user, reviewer=self.user, rating=5, description='Super freundlich alles top gelaufen' )
+        self.review = ReviewModel.objects.create( business_user=self.business_user, reviewer=self.user, rating=5, description='Super freundlich alles top gelaufen' )
         
         self.userprofile_costumer = UserProfile.objects.create(user=self.user, type='customer')
         self.userprofile_business = UserProfile.objects.create(user=self.business_user, type='business')
@@ -39,3 +39,73 @@ class ReviewsTest(APITestCase):
         self.token_business = Token.objects.create(user=self.business_user)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         
+    def test_get_reviews(self):
+        url = reverse('reviews')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+    def test_post_reviews(self):
+        url = reverse('reviews')
+        data = {
+            "business_user": 1,
+            "rating": 4,
+            "description": "Alles war toll!"
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+    def test_patch_reviews(self):
+        url = reverse('reviews_detail', kwargs={'pk': self.review.pk})
+        data = {
+            "rating": 5,
+            "description": "Es war richtig gut erklärt"
+        }
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+    def test_delete_reviews(self):
+        url = reverse('reviews_detail', kwargs={'pk': self.review.pk})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        
+        
+# unhappy path
+
+    def test_get_reviews_401(self):
+        url = reverse('reviews')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + ' ')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        
+    def test_get_reviews_400(self):
+        url = reverse('reviews')
+        data = {
+            "business_user": 1,
+            "rating": 4,
+            "description": "Alles war toll!"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)    
+        
+    def test_get_reviews_401(self):
+        url = reverse('reviews')
+        data = {
+            "business_user": 1,
+            "rating": 4,
+            "description": "Alles war toll!"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + ' ')
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        
+    def test_get_reviews_403(self):
+        url = reverse('reviews')
+        data = {
+            "business_user": 1,
+            "rating": 4,
+            "description": "Alles war toll!"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_business.key)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
