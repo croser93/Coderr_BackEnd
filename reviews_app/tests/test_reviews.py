@@ -39,6 +39,8 @@ class ReviewsTest(APITestCase):
         self.token_business = Token.objects.create(user=self.business_user)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         
+        
+# test /api/reviews/ 
     def test_get_reviews(self):
         url = reverse('reviews')
         response = self.client.get(url)
@@ -54,6 +56,8 @@ class ReviewsTest(APITestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         
+        
+# test /api/reviews/{id}/  
     def test_patch_reviews(self):
         url = reverse('reviews_detail', kwargs={'pk': self.review.pk})
         data = {
@@ -69,26 +73,27 @@ class ReviewsTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         
         
-# unhappy path
+#Unhappy Path check Error Code 400, 401, 403, 404 ###############################################################
 
+
+# Unhappy /api/reviews/  
     def test_get_reviews_401(self):
         url = reverse('reviews')
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + ' ')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         
-    def test_get_reviews_400(self):
+    def test_post_reviews_400(self):
         url = reverse('reviews')
         data = {
-            "business_user": 1,
-            "rating": 4,
-            "description": "Alles war toll!"
+            "business_user": 'business User'
+
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)    
         
-    def test_get_reviews_401(self):
+    def test_post_reviews_401(self):
         url = reverse('reviews')
         data = {
             "business_user": 1,
@@ -99,7 +104,7 @@ class ReviewsTest(APITestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         
-    def test_get_reviews_403(self):
+    def test_post_reviews_403(self):
         url = reverse('reviews')
         data = {
             "business_user": 1,
@@ -109,3 +114,41 @@ class ReviewsTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_business.key)
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        
+# Unhappy /api/reviews/{id}/  
+    def test_patch_reviews_400(self):
+        url = reverse('reviews_detail', kwargs={'pk': self.review.pk})
+        data = {
+            "rating": 'fünf',
+        }
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        
+    def test_patch_reviews_401(self):
+        url = reverse('reviews_detail', kwargs={'pk': self.review.pk})
+        data = {
+            "rating": 5,
+            "description": "Es war richtig gut erklärt"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + ' ')
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        
+    def test_patch_reviews_403(self):
+        url = reverse('reviews_detail', kwargs={'pk': self.review.pk})
+        data = {
+            "rating": 5,
+            "description": "Es war richtig gut erklärt"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_business.key)
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        
+    def test_patch_reviews_404(self):
+        url = reverse('reviews_detail', kwargs={'pk': 999})
+        data = {
+            "rating": 5,
+            "description": "Es war richtig gut erklärt"
+        }
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
