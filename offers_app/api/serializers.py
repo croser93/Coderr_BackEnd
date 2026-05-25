@@ -4,16 +4,39 @@ from django.db.models import Min
 from offers_app.models import OfferModel, DetailModel
 
 class UserSerializer(serializers.ModelSerializer):
+    
+    """
+    
+    Serializer for User information. 
+    
+    """
+    
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'username']
 
 class DetailSerializer(serializers.ModelSerializer):
+    
+    """
+    
+    Serializer for Details in Offers. 
+    
+    """
     class Meta:
         model = DetailModel
         fields = ['id','title', 'revisions', 'delivery_time_in_days', 'price', 'features', 'offer_type']
 
 class OfferPostSerializer(serializers.ModelSerializer):
+    
+    """
+    
+    Serializer for POST Offers.
+    
+    details = from DetailSerializer
+    validate_details = Validate min 3. 
+    create = Create a Offer
+    
+    """
         
     details = DetailSerializer(many=True)
     class Meta:
@@ -33,6 +56,17 @@ class OfferPostSerializer(serializers.ModelSerializer):
         return offer
     
 class OfferGetSerializer(serializers.ModelSerializer):
+    
+    """
+    
+    Serializer for GET Offers.
+    
+    user_details = from UserSerializer
+    min_price = return the smallest price in details
+    min_delivery_time = return the smallest delivery_time_in_days in details
+    details = from DetailSerializer
+    
+    """
 
     user_details = UserSerializer(source='user', read_only=True)
     min_price = serializers.SerializerMethodField()
@@ -54,6 +88,13 @@ class OfferGetSerializer(serializers.ModelSerializer):
             'url': f'/offerdetails/{detail.id}/'} for detail in obj.details.all()]
     
 class OfferDetailSerializer(OfferGetSerializer):
+    
+    """
+    
+    Serializer for GET offerdetails.
+    
+    """
+    
     id = serializers.IntegerField(read_only=True)
     class Meta:
         model = OfferModel
@@ -61,6 +102,11 @@ class OfferDetailSerializer(OfferGetSerializer):
 
     
 class OfferDetailsIdSerializer(DetailSerializer):
+    """
+    
+    Serializer for GET offerdetails id.
+    
+    """
     
     class Meta:
         model = DetailModel

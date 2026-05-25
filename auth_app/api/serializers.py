@@ -5,6 +5,15 @@ from auth_app.models import UserProfile
 from profile_app.models import ProfileModel
 
 class RegistrationSerializer(serializers.ModelSerializer):
+    """
+    Serializer for registration a new User.
+    
+    calculated fields:
+        - type  = is the choiche field fot business or customer
+        - repeated_password = check is the password even repeated_password
+        - username  = is the name from the User
+    """
+
 
     TYPE_CHOICES = [
         ('customer', 'customer'),
@@ -60,6 +69,15 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return account
     
 class LoginSerializer(serializers.ModelSerializer):
+    
+    """
+    Serializer for log in.
+    
+    calculated fields:
+        - username     =   Validate the field username with DB
+        - password  =   Validate the field password with DB
+
+    """
 
     username = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True)
