@@ -1,135 +1,159 @@
 # Coderr Backend
 
-Dieses Projekt ist das **Django REST Framework Backend** zur bestehenden Frontend-Anwendung [Coderr FrontEnd](https://github.com/croser93/Coder_FrontEnd.git).
+This project is the **Django REST Framework backend** for the existing frontend application [Coderr FrontEnd](https://github.com/croser93/Coder_FrontEnd.git).
 
-> **Lernprojekt der Developer Akademie** — Das Backend wurde eigenständig entwickelt, um das vorgegebene Frontend vollständig anzubinden und damit alle Kernfunktionen der Plattform zu realisieren.
+> **Developer Akademie learning project** — The backend was independently developed to fully connect to the given frontend and implement all core platform features.
 
 ---
 
-## Über das Projekt
+## About the Project
 
-Coderr ist eine Plattform, auf der **Business-User** ihre Dienstleistungen als Angebote einstellen und **Kunden** diese Angebote bestellen und bewerten können. Das Backend stellt eine REST API bereit, die das bestehende Frontend vollständig versorgt.
+Coderr is a platform where **business users** can list their services as offers and **customers** can order and review those offers. The backend provides a REST API that fully serves the existing frontend.
 
 ---
 
 ## Tech Stack
 
-| Technologie | Version |
+| Technology | Version |
 |---|---|
 | Python | 3.x |
-| Django | 6.0 |
-| Django REST Framework | latest |
-| django-cors-headers | latest |
-| django-filter | latest |
-| Datenbank | SQLite (dev) |
-| Authentifizierung | Token-basiert (DRF TokenAuth) |
+| Django | 6.0.5 |
+| Django REST Framework | 3.17.1 |
+| django-cors-headers | 4.9.0 |
+| django-filter | 25.2 |
+| Pillow | 12.2.0 |
+| Database | SQLite (dev) |
+| Authentication | Token-based (DRF TokenAuth) |
 
----
 
-## Features
-
-- **Authentifizierung** — Registrierung, Login, Logout mit Token-Authentifizierung
-- **Profile** — Nutzerprofile für Business- und Customer-User
-- **Angebote** — Angebote erstellen, abrufen, bearbeiten und löschen (inkl. Detailpakete: Basic, Standard, Premium)
-- **Bestellungen** — Bestellungen aufgeben, Status verwalten (`in_progress`, `completed`, `cancelled`)
-- **Bewertungen** — Bewertungen zu Business-Usern abgeben und abrufen
-- **Base-Info** — Aggregierte Plattformstatistiken
-
----
-
-## API Endpunkte
+## API Endpoints
 
 ### Auth
-| Methode | Endpunkt | Beschreibung |
+| Method | Endpoint | Description |
 |---|---|---|
-| POST | `/api/registration/` | Neuen Nutzer registrieren |
-| POST | `/api/login/` | Login, gibt Token zurück |
-| POST | `/api/logout/` | Logout, invalidiert Token |
+| POST | `/api/registration/` | Register a new user |
+| POST | `/api/login/` | Login, returns token |
+| POST | `/api/logout/` | Logout, invalidates token |
 
-### Profile
-| Methode | Endpunkt | Beschreibung |
+### Profiles
+| Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/profile/` | Eigenes Profil abrufen |
-| GET/PATCH | `/api/profile/<id>/` | Profil nach ID abrufen/bearbeiten |
-| GET | `/api/profiles/business/` | Alle Business-Profile |
-| GET | `/api/profiles/customer/` | Alle Customer-Profile |
+| GET | `/api/profile/` | Get own profile |
+| GET/PATCH | `/api/profile/<id>/` | Get or edit profile by ID |
+| GET | `/api/profiles/business/` | All business profiles |
+| GET | `/api/profiles/customer/` | All customer profiles |
 
-### Angebote
-| Methode | Endpunkt | Beschreibung |
+### Offers
+| Method | Endpoint | Description |
 |---|---|---|
-| GET/POST | `/api/offers/` | Alle Angebote / Angebot erstellen |
-| GET/PUT/PATCH/DELETE | `/api/offers/<id>/` | Angebot nach ID |
-| GET | `/api/offersdetails/<id>/` | Angebotsdetail (Paket) nach ID |
+| GET/POST | `/api/offers/` | All offers / create offer |
+| GET/PUT/PATCH/DELETE | `/api/offers/<id>/` | Offer by ID |
+| GET | `/api/offerdetails/<id>/` | Offer detail (package) by ID |
 
-### Bestellungen
-| Methode | Endpunkt | Beschreibung |
+### Orders
+| Method | Endpoint | Description |
 |---|---|---|
-| GET/POST | `/api/orders/` | Alle Bestellungen / Bestellung aufgeben |
-| GET/PATCH/DELETE | `/api/orders/<id>/` | Bestellung nach ID |
-| GET | `/api/order-count/<business_user_id>/` | Offene Bestellungen eines Business-Users |
-| GET | `/api/completed-order-count/<business_user_id>/` | Abgeschlossene Bestellungen |
+| GET/POST | `/api/orders/` | All orders / place order |
+| GET/PATCH/DELETE | `/api/orders/<id>/` | Order by ID |
+| GET | `/api/order-count/<business_user_id>/` | Open orders of a business user |
+| GET | `/api/completed-order-count/<business_user_id>/` | Completed orders |
 
-### Bewertungen
-| Methode | Endpunkt | Beschreibung |
+### Reviews
+| Method | Endpoint | Description |
 |---|---|---|
-| GET/POST | `/api/reviews/` | Alle Bewertungen / Bewertung abgeben |
-| GET/PATCH/DELETE | `/api/reviews/<id>/` | Bewertung nach ID |
+| GET/POST | `/api/reviews/` | All reviews / submit review |
+| GET/PATCH/DELETE | `/api/reviews/<id>/` | Review by ID |
 
 ### Base Info
-| Methode | Endpunkt | Beschreibung |
+| Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/base-info/` | Plattformstatistiken |
+| GET | `/api/base-info/` | Platform statistics |
 
 ---
 
 ## Installation & Setup
 
 ```bash
-# 1. Repository klonen
+# 1. Clone repository
 git clone https://github.com/croser93/Coderr_BackEnd.git
 cd Coderr_BackEnd
 
-# 2. Virtuelle Umgebung erstellen und aktivieren
-python -m venv env
+# 2. Create and activate virtual environment
+python -m venv .venv
 source env/bin/activate      # Linux/Mac
 env\Scripts\activate         # Windows
 
-# 3. Abhängigkeiten installieren
-pip install django djangorestframework django-cors-headers django-filter pillow
+# 3. Install dependencies from requirements.txt
+pip install -r requirements.txt
 
-# 4. Datenbank migrieren
+# 4. Run database migrations
 python manage.py migrate
 
-# 5. Entwicklungsserver starten
+# 5. Start development server
 python manage.py runserver
 ```
 
-Die API ist anschließend unter `http://127.0.0.1:8000/api/` erreichbar.
+The API is then available at `http://127.0.0.1:8000/api/`.
 
 ---
 
-## Projektstruktur
+## Demo Users
+
+To use the platform right away, you can create two demo users via the Django shell.
+
+**Important:** Each user needs entries in both `auth_app` (type) and `profile_app` (profile), otherwise the API will not work correctly.
+
+```bash
+python manage.py shell
+```
+
+Then paste the following block into the shell:
+
+```python
+from django.contrib.auth.models import User
+from auth_app.models import UserProfile
+from profile_app.models import ProfileModel
+
+# Customer user
+andrey = User.objects.create_user(username='andrey', password='asdasd', email='andrey@test.com')
+UserProfile.objects.create(user=andrey, type='customer')
+ProfileModel.objects.create(user=andrey, location='Berlin')
+
+# Business user
+kevin = User.objects.create_user(username='kevin', password='asdasd24', email='kevin@test.com')
+UserProfile.objects.create(user=kevin, type='business')
+ProfileModel.objects.create(user=kevin, location='Munich')
+```
+
+| Role | Username | Password |
+|---|---|---|
+| Customer | `andrey` | `asdasd` |
+| Business | `kevin` | `asdasd24` |
+
+---
+
+## Project Structure
 
 ```
 Coderr_BackEnd/
-├── core/               # Projektkonfiguration (settings, urls, wsgi)
-├── auth_app/           # Registrierung, Login, Logout
-├── profile_app/        # Nutzerprofile (Business & Customer)
-├── offers_app/         # Angebote und Angebotspakete
-├── orders_app/         # Bestellverwaltung
-├── reviews_app/        # Bewertungssystem
-└── baseinfo_app/       # Plattformstatistiken
+├── core/               # Project configuration (settings, urls, wsgi)
+├── auth_app/           # Registration, login, logout
+├── profile_app/        # User profiles (business & customer)
+├── offers_app/         # Offers and offer packages
+├── orders_app/         # Order management
+├── reviews_app/        # Review system
+└── baseinfo_app/       # Platform statistics
 ```
 
 ---
 
 ## Frontend
 
-Das zugehörige Frontend findet sich hier:
+The corresponding frontend can be found here:
 [https://github.com/croser93/Coder_FrontEnd.git](https://github.com/croser93/Coder_FrontEnd.git)
 
 ---
 
-## Autor
+## Author
 
-**Maik G.** — Lernprojekt im Rahmen der [Developer Akademie](https://developerakademie.com/)
+**Maik G.** — Learning project as part of the [Developer Akademie](https://developerakademie.com/)
