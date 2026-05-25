@@ -6,6 +6,7 @@ from .serializers import OrdersSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
+from django.db.models import Q
 from .permissions import IsBusinessUserOrAdmin, IsCustomerUserOrAdmin
 from offers_app.models import DetailModel
 
@@ -41,7 +42,7 @@ class OrderListView(APIView):
 
 
     def get(self, request):
-        order = OrdersModel.objects.all()
+        order = OrdersModel.objects.filter(Q(customer_user=request.user) | Q(business_user=request.user))
         serializer = OrdersSerializer(order, many=True)
         return Response (serializer.data, status=200)
 

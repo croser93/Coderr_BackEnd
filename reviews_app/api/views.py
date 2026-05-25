@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from .permissions import UserOrAdmin, IsCustomerUserOrAdmin
 from .serializer import ReviewSerializer
 from reviews_app.models import ReviewModel
+from django.db.models import Q
+
 
 
 class ReviewListView(APIView):
@@ -34,7 +36,7 @@ class ReviewListView(APIView):
 
 
     def get(self, request):
-        review = ReviewModel.objects.all()
+        review = ReviewModel.objects.filter(Q(reviewer=request.user) | Q(business_user=request.user))
         serializer = ReviewSerializer(review, many=True)
         return Response (serializer.data, status=200)
 
