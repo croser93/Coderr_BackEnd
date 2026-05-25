@@ -16,6 +16,15 @@ from rest_framework.exceptions import ValidationError
 
 
 class OfferListView(generics.ListCreateAPIView):
+    """
+    View List for Offers.
+    
+    Endpoints:
+    - GET /api/offers/ - Get list of offers with Query Parameters
+    - POST /api/offers/ - Post a new offer
+    
+    Query Parameters = creator_id, min_price, max_delivery_time, ordering and search
+    """
 
     queryset = OfferModel.objects.all()
     permission_classes = [IsAuthenticated, IsBusinessUserOrAdmin]
@@ -49,8 +58,17 @@ class OfferListView(generics.ListCreateAPIView):
 
         
 class OfferDetailView(APIView):
-
     permission_classes = [IsAuthenticated, IsBusinessUserOrAdmin]
+    """
+   View for single Offers.
+    
+    Endpoints:
+    - GET /api/offers/{id}/ - Get single of offer.
+    - PATCH /api/offers/{id}/ - Patch a single offer.
+    - DELETE /api/offers/{id}/ - Delete a single offer
+
+    """
+    
 
     def get(self, request, pk):
         try:
@@ -83,6 +101,14 @@ class OfferDetailView(APIView):
            
 class OfferDetailsIdView(APIView):
     permission_classes = [IsAuthenticated]
+    
+    """
+    View List for Offers.
+    
+    Endpoints:
+    - GET /api/offerdetails/{id}/ - Get a single offer with detail.
+
+    """
     
     def get(self, request, pk):
         try:

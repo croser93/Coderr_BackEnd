@@ -6,6 +6,7 @@ from .serializers import OrdersSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
+from django.db.models import Q
 from .permissions import IsBusinessUserOrAdmin, IsCustomerUserOrAdmin
 from offers_app.models import DetailModel
 
@@ -13,6 +14,16 @@ from offers_app.models import DetailModel
 
 
 class OrderListView(APIView):
+    
+    """
+    View list for orders.
+    
+    Endpoints:
+    - GET /api/orders/ - Get a list of orders.
+    - Post /api/orders/ - Post a single of order.
+
+
+    """
 
     permission_classes = [IsAuthenticated, IsCustomerUserOrAdmin]
     authentication_classes = [TokenAuthentication]
@@ -31,11 +42,21 @@ class OrderListView(APIView):
 
 
     def get(self, request):
-        order = OrdersModel.objects.all()
+        order = OrdersModel.objects.filter(Q(customer_user=request.user) | Q(business_user=request.user))
         serializer = OrdersSerializer(order, many=True)
         return Response (serializer.data, status=200)
 
 class OrderDetailView(APIView):
+    
+    """
+   View for single order.
+    
+    Endpoints:
+    - GET /api/orders/{id}/ - Get single of offer.
+    - PATCH /api/orders/{id}/ - Patch a single offer.
+    - DELETE /api/orders/{id}/ - Delete a single offer
+
+    """
 
     permission_classes = [IsAuthenticated, IsBusinessUserOrAdmin]
 
@@ -71,6 +92,14 @@ class OrderDetailView(APIView):
 class BusinessUserCountView(APIView):
     permission_classes = [ IsAuthenticated]
     
+    """
+    View for order count.
+    
+    Endpoints:
+    - GET /api/order-count/{business_user_id}/- Get a order_count of Business User.
+
+    """
+    
     def get(self, request, business_user_id):
         try:
             user = User.objects.get(pk=business_user_id)
@@ -84,6 +113,14 @@ class BusinessUserCountView(APIView):
         
 class BusinessUserCountCompletedView(APIView):
     permission_classes = [ IsAuthenticated]
+    
+    """
+    View for complete order count.
+    
+    Endpoints:
+    - GET /api/completed-order-count/{business_user_id}/- Get a completed_order_count of Business User.
+
+    """
 
     def get(self, request, business_user_id):
         try:

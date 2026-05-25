@@ -4,6 +4,16 @@ from offers_app.models import DetailModel
 
 
 class OrdersSerializer(serializers.ModelSerializer):
+    
+    """
+    Serializer for add a Order from Offer.
+
+    calculated fields:
+        - offer_detail_id : return the Offer id with content.
+        
+        - create : Create a Order based on the Offer id
+        
+    """
 
     offer_detail_id = serializers.IntegerField(write_only=True)
 

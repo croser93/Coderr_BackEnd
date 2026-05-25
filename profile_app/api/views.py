@@ -9,8 +9,16 @@ from profile_app.models import ProfileModel
 from .serializers import ProfileSerializer
 
 class ProfileListView(APIView):
+    """
+    View List for User Profile.
+    
+    Endpoints:
+    - GET /api/profile/ - List all profile.
+
+    """
 
     permission_classes = [IsAuthenticated]
+    
     
     def get(self, request):
         profile_list = ProfileModel.objects.all()
@@ -18,7 +26,18 @@ class ProfileListView(APIView):
         return Response (serializer.data)
     
 class ProfileDetailView(APIView):
+    """
+    View single User Profile.
+    
+    Endpoints:
+    - GET /api/profile/{ID} - Single profile where user is a member
+    - PATCH /api/profile/{ID} - Update a signle profile
+    - DELETE /api/profile/{ID} - Delete a single profile
+    
+    """
+    
     permission_classes = [IsAuthenticated, UserOrAdmin]
+    
     
     def get(self, request, pk):
         try:
@@ -41,6 +60,15 @@ class ProfileDetailView(APIView):
             return Response ({"error" : "Das Benutzerprofil wurde nicht gefunden."}, status=404)
         
 class ProfileCustomerListView(APIView):
+    
+    """
+    View List User Profile.
+    
+    Endpoints:
+    - GET /api/profile//business/ - List of profile where user is business user.
+    
+    """
+    
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
@@ -50,6 +78,14 @@ class ProfileCustomerListView(APIView):
 
         
 class ProfileBusinessListView(APIView):
+    """
+    View List User Profile.
+    
+    Endpoints:
+    - GET /api/profile/customer/ - List profile where user is customer user.
+
+    """
+    
     permission_classes = [IsAuthenticated]
     
     def get(self, request):

@@ -5,6 +5,15 @@ from auth_app.models import UserProfile
 from profile_app.models import ProfileModel
 
 class RegistrationSerializer(serializers.ModelSerializer):
+    """
+    Serializer for registration a new User.
+    
+    calculated fields:
+        - type  = is the choiche field fot business or customer
+        - repeated_password = check is the password even repeated_password
+        - username  = is the name from the User
+    """
+
 
     TYPE_CHOICES = [
         ('customer', 'customer'),
@@ -48,7 +57,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
         account = User(
             email = email,
-            username = first_name + '-' + last_name,
+            username = first_name + ' ' + last_name,
             first_name = first_name,
             last_name = last_name,
         )
@@ -60,16 +69,25 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return account
     
 class LoginSerializer(serializers.ModelSerializer):
+    
+    """
+    Serializer for log in.
+    
+    calculated fields:
+        - username     =   Validate the field username with DB
+        - password  =   Validate the field password with DB
 
-    email = serializers.EmailField()
+    """
+
+    username = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = [ 'email', 'password']
+        fields = [ 'username', 'password']
 
     def validate(self, data):
-        user_email = User.objects.filter(email=data['email']).first()
-        if user_email and user_email.check_password(data['password']):
-            return{'user' :user_email}
+        username = User.objects.filter(username=data['username']).first()
+        if username and username.check_password(data['password']):
+            return{'user' :username}
         raise serializers.ValidationError({'error': 'wrong credentials'})
