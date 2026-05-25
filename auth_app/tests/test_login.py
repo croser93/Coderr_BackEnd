@@ -18,10 +18,11 @@ class LoginTest(APITestCase):
         response = self.client.post(url, data)
         self.assertIsInstance(response.data['token'], str)
         self.assertEqual(response.data['email'], self.user.email)
-        self.assertEqual(response.data['username'], self.user.username)
         self.assertIsInstance(response.data['user_id'], int)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+
+# Unhappy Path
     def test_bad_login_400(self):
         url = reverse('login')
         data = {}

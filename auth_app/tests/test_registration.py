@@ -22,7 +22,7 @@ class RegistrationTest(APITestCase):
         
 
 class BadRegistrationTest(APITestCase):
-
+# Unhappy Path
     def test_bad_registration_400(self):
         url = reverse('registration')
         data = {}

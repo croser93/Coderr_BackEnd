@@ -63,7 +63,7 @@ class ProfileTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-#  Test the Unhappy Path
+#Unhappy Path check Error Code 400, 401, 403, 404 ###############################################################
 
     def test_get_profile_401(self):
         url = reverse('profile_detail', kwargs={'pk': '1'})
