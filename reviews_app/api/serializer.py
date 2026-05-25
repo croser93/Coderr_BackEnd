@@ -4,6 +4,13 @@ from django.contrib.auth.models import User
 
 class ReviewSerializer(serializers.ModelSerializer):
     
+    """
+    Serializer for Review.
+
+    validate:
+        A user may write only one review per business user.
+    """
+    
     class Meta:
         model = ReviewModel
         fields = ['id', "business_user", "reviewer", "rating", "description", "created_at", "updated_at"]

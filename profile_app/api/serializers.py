@@ -4,6 +4,13 @@ from profile_app.models import ProfileModel
 
 class ProfileSerializer(serializers.ModelSerializer):
     
+    """
+    Serializer for add a Profile for the User.
+    
+    - It is created during registration and populated with data.
+    
+    """
+    
 
     user = serializers.IntegerField (source='user.id', read_only=True)
     username = serializers.CharField (source='user.username', read_only=True)
