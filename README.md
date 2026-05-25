@@ -115,12 +115,12 @@ from auth_app.models import UserProfile
 from profile_app.models import ProfileModel
 
 # Customer user
-andrey = User.objects.create_user(username='andrey', password='asdasd', email='andrey@test.com')
+andrey = User.objects.create_user(username='andrey', password='asdasd', email='andrey@test.com', first_name='Andrey', last_name='Customer')
 UserProfile.objects.create(user=andrey, type='customer')
 ProfileModel.objects.create(user=andrey, location='Berlin')
 
 # Business user
-kevin = User.objects.create_user(username='kevin', password='asdasd24', email='kevin@test.com')
+kevin = User.objects.create_user(username='kevin', password='asdasd24', email='kevin@test.com', first_name='Kevin', last_name='Business')
 UserProfile.objects.create(user=kevin, type='business')
 ProfileModel.objects.create(user=kevin, location='Munich')
 ```
