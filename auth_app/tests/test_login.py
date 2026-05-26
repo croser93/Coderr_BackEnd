@@ -11,7 +11,7 @@ class LoginTest(APITestCase):
     def test_login(self):
         url = reverse('login')
         data = {
-            'email':'testuser@test.de',
+            'username':'testuser',
             'password':'123456'
         }
 

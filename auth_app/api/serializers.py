@@ -21,7 +21,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     ]
     type = serializers.ChoiceField(choices = TYPE_CHOICES)
     repeated_password = serializers.CharField(write_only=True)
-    username = serializers.CharField(validators=[RegexValidator(r'^[a-zA-ZäöüÄÖÜß\s]+$', 'Only letters and spaces allowed.')])
+    username = serializers.CharField(validators=[RegexValidator(r'^[a-zA-ZäöüÄÖÜß]+$', 'Only letters and spaces allowed.')])
     class Meta:
         model = User
         fields = ['username', 'email', 'password', 'repeated_password', 'type']
@@ -30,11 +30,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'email': {'required': True},
         }
 
-    
-    def validate_username(self, value):
-        if len(value.split()) < 2:
-            raise serializers.ValidationError({'error': 'Enter your Firstname and Lastname'})
-        return value
 
     def save(self, **kwargs):
         pw = self.validated_data['password']
@@ -43,9 +38,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
         username = self.validated_data['username']
         user_type = self.validated_data['type']
 
-        name_parts = username.split()
-        first_name = name_parts[0]
-        last_name  = ' '.join(name_parts[1:])
 
         all_emails = User.objects.values_list('email', flat=True)
 
@@ -57,9 +49,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
         account = User(
             email = email,
-            username = first_name + ' ' + last_name,
-            first_name = first_name,
-            last_name = last_name,
+            username = username,
+            first_name = username
         )
 
         account.set_password(pw)
