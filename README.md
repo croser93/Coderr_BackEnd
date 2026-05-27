@@ -16,7 +16,7 @@ Coderr is a platform where **business users** can list their services as offers 
 
 | Technology | Version |
 |---|---|
-| Python | 3.x |
+| Python | 3.14.4 |
 | Django | 6.0.5 |
 | Django REST Framework | 3.17.1 |
 | django-cors-headers | 4.9.0 |
@@ -26,49 +26,6 @@ Coderr is a platform where **business users** can list their services as offers 
 | Authentication | Token-based (DRF TokenAuth) |
 
 
-## API Endpoints
-
-### Auth
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/registration/` | Register a new user |
-| POST | `/api/login/` | Login, returns token |
-| POST | `/api/logout/` | Logout, invalidates token |
-
-### Profiles
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/profile/` | Get own profile |
-| GET/PATCH | `/api/profile/<id>/` | Get or edit profile by ID |
-| GET | `/api/profiles/business/` | All business profiles |
-| GET | `/api/profiles/customer/` | All customer profiles |
-
-### Offers
-| Method | Endpoint | Description |
-|---|---|---|
-| GET/POST | `/api/offers/` | All offers / create offer |
-| GET/PUT/PATCH/DELETE | `/api/offers/<id>/` | Offer by ID |
-| GET | `/api/offerdetails/<id>/` | Offer detail (package) by ID |
-
-### Orders
-| Method | Endpoint | Description |
-|---|---|---|
-| GET/POST | `/api/orders/` | All orders / place order |
-| GET/PATCH/DELETE | `/api/orders/<id>/` | Order by ID |
-| GET | `/api/order-count/<business_user_id>/` | Open orders of a business user |
-| GET | `/api/completed-order-count/<business_user_id>/` | Completed orders |
-
-### Reviews
-| Method | Endpoint | Description |
-|---|---|---|
-| GET/POST | `/api/reviews/` | All reviews / submit review |
-| GET/PATCH/DELETE | `/api/reviews/<id>/` | Review by ID |
-
-### Base Info
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/base-info/` | Platform statistics |
-
 ---
 
 ## Installation & Setup
@@ -76,25 +33,46 @@ Coderr is a platform where **business users** can list their services as offers 
 ```bash
 # 1. Clone repository
 git clone https://github.com/croser93/Coderr_BackEnd.git
+```
+```bash
+# 2. go to Projekt
 cd Coderr_BackEnd
-
-# 2. Create and activate virtual environment
-python -m venv .venv
-source env/bin/activate      # Linux/Mac
-env\Scripts\activate         # Windows
-
-# 3. Install dependencies from requirements.txt
-pip install -r requirements.txt
-
-# 4. Run database migrations
-python manage.py migrate
-
-# 5. Start development server
-python manage.py runserver
 ```
 
-The API is then available at `http://127.0.0.1:8000/api/`.
+```bash
+# 3. Create and activate virtual environment
+python -m venv .venv
+```
 
+```bash
+# 4.Activate the virtual environment only Linux/Mac!
+source env/bin/activate
+```
+
+```bash
+# 4.Activate the virtual environment only Windows!
+env\Scripts\activate
+```
+
+```bash
+# 5. Install dependencies from requirements.txt
+pip install -r requirements.txt
+```
+
+```bash
+# 6. Creates migration files
+python manage.py makemigrations
+```
+
+```bash
+# 7. Run database migrations
+python manage.py migrate
+```
+
+```bash
+# 8. Start development server
+python manage.py runserver
+```
 ---
 
 ## Demo Users
@@ -114,12 +92,10 @@ from django.contrib.auth.models import User
 from auth_app.models import UserProfile
 from profile_app.models import ProfileModel
 
-# Customer user
 andrey = User.objects.create_user(username='andrey', password='asdasd', email='andrey@test.com', first_name='Andrey', last_name='Customer')
 UserProfile.objects.create(user=andrey, type='customer')
 ProfileModel.objects.create(user=andrey, location='Berlin')
 
-# Business user
 kevin = User.objects.create_user(username='kevin', password='asdasd24', email='kevin@test.com', first_name='Kevin', last_name='Business')
 UserProfile.objects.create(user=kevin, type='business')
 ProfileModel.objects.create(user=kevin, location='Munich')
