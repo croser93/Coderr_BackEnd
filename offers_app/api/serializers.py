@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.db.models import Min
 from offers_app.models import OfferModel, DetailModel
 
-
 class UserSerializer(serializers.ModelSerializer):
     """
     Serializer for User information. 
@@ -19,8 +18,7 @@ class DetailSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = DetailModel
-        fields = ['id', 'title', 'revisions',
-                  'delivery_time_in_days', 'price', 'features', 'offer_type']
+        fields = ['id', 'title', 'revisions', 'delivery_time_in_days', 'price', 'features', 'offer_type']
 
 
 class OfferPostSerializer(serializers.ModelSerializer):
@@ -68,8 +66,7 @@ class OfferGetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OfferModel
-        fields = ['id', 'user', 'title', 'image', 'description', 'created_at',
-                  'updated_at', 'details', 'min_price', 'min_delivery_time', 'user_details']
+        fields = ['id', 'user', 'title', 'image', 'description', 'created_at', 'updated_at', 'details', 'min_price', 'min_delivery_time', 'user_details']
 
     def get_min_price(self, obj):
         return obj.details.aggregate(min_price=Min('price'))['min_price']
@@ -120,8 +117,7 @@ class OfferDetailSerializer(OfferGetSerializer):
     
     class Meta:
         model = OfferModel
-        fields = ['id', 'user', 'title', 'image', 'description', 'created_at',
-                  'updated_at', 'details', 'min_price', 'min_delivery_time']
+        fields = ['id', 'user', 'title', 'image', 'description', 'created_at', 'updated_at', 'details', 'min_price', 'min_delivery_time']
 
 
 class OfferDetailsIdSerializer(DetailSerializer):
@@ -132,5 +128,4 @@ class OfferDetailsIdSerializer(DetailSerializer):
 
     class Meta:
         model = DetailModel
-        fields = ['id', 'title', 'revisions',
-                  'delivery_time_in_days', 'price', 'features', 'offer_type']
+        fields = ['id', 'title', 'revisions', 'delivery_time_in_days', 'price', 'features', 'offer_type']

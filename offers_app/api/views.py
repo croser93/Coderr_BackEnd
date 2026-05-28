@@ -25,8 +25,7 @@ class OfferListView(generics.ListCreateAPIView):
     queryset = OfferModel.objects.all()
     permission_classes = [IsAuthenticated]
     pagination_class = LargeResultsSetPagination
-    filter_backends = [DjangoFilterBackend,
-                       filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_class = OfferFilter
     search_fields = ['title', 'description']
     ordering_fields = ['updated_at']
@@ -37,8 +36,7 @@ class OfferListView(generics.ListCreateAPIView):
         return OfferGetSerializer
 
     def get_validation_param(self):
-        allowed_params = {'creator_id', 'min_price',
-                          'max_delivery_time', 'ordering', 'search', 'page_size', 'page'}
+        allowed_params = {'creator_id', 'min_price', 'max_delivery_time', 'ordering', 'search', 'page_size', 'page'}
         return set(self.request.query_params.keys()) - allowed_params
 
     def get_queryset(self):

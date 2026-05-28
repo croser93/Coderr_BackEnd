@@ -21,5 +21,3 @@ class ReviewSerializer(serializers.ModelSerializer):
             if ReviewModel.objects.filter(reviewer=request.user, business_user=data['business_user']).exists():
                 raise serializers.ValidationError({'error': 'Du hast diesen Business-User bereits bewertet.'})
         return data
-   
-    

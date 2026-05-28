@@ -10,10 +10,10 @@ class BaseInfoSerializer(serializers.Serializer):
     Serializer for Base Information for Site.
     
     calculated fields:
-        - review_count = return all counts of reviews.
-        - average_rating  = return average rating of all reviews.
-        - business_profile_count = return the count of all Business Profiles.
-        - offer_count  = return the count of offers.
+    - review_count = return all counts of reviews.
+    - average_rating  = return average rating of all reviews.
+    - business_profile_count = return the count of all Business Profiles.
+    - offer_count  = return the count of offers.
     """
 
     review_count = serializers.SerializerMethodField()

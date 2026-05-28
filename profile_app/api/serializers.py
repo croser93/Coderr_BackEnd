@@ -39,7 +39,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class ProfilesBusinessSerializer(ProfileSerializer):
-       class Meta:
+    class Meta:
         model = ProfileModel
         fields= ["user", "username", "first_name", "last_name", "file", "location", "tel", "description", "working_hours", "type"]
 

@@ -14,7 +14,6 @@ class ProfileListView(APIView):
     
     Endpoints:
     - GET /api/profile/ - List all profile.
-
     """
 
     permission_classes = [IsAuthenticated]
@@ -33,7 +32,6 @@ class ProfileDetailView(APIView):
     - GET /api/profile/{ID} - Single profile where user is a member
     - PATCH /api/profile/{ID} - Update a signle profile
     - DELETE /api/profile/{ID} - Delete a single profile
-    
     """
     
     permission_classes = [IsAuthenticated, UserOrAdmin]
@@ -60,13 +58,11 @@ class ProfileDetailView(APIView):
             return Response ({"error" : "Das Benutzerprofil wurde nicht gefunden."}, status=404)
         
 class ProfileCustomerListView(APIView):
-    
     """
     View List User Profile.
     
     Endpoints:
     - GET /api/profile//business/ - List of profile where user is business user.
-    
     """
     
     permission_classes = [IsAuthenticated]
@@ -76,14 +72,12 @@ class ProfileCustomerListView(APIView):
         serializer = ProfilesCustomersSerializer(profile_list, many=True)
         return Response (serializer.data)
 
-        
 class ProfileBusinessListView(APIView):
     """
     View List User Profile.
     
     Endpoints:
     - GET /api/profile/customer/ - List profile where user is customer user.
-
     """
     
     permission_classes = [IsAuthenticated]

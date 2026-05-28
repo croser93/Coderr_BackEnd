@@ -11,7 +11,7 @@ from reviews_app.models import ReviewModel
 
 class ReviewListView(APIView):
     """
-     View for Reviews
+    View for Reviews
 
     Endpoints:
     - POST /api/reviews/ - POST a review where user is Business User.
@@ -34,8 +34,7 @@ class ReviewListView(APIView):
             return Response({"error": "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
 
     def get(self, request):
-        reviews = ReviewFilter(request.query_params,
-                               queryset=ReviewModel.objects.all()).qs
+        reviews = ReviewFilter(request.query_params, queryset=ReviewModel.objects.all()).qs
         ordering = request.query_params.get('ordering')
         if ordering in ['rating', 'updated_at', '-rating', '-updated_at']:
             reviews = reviews.order_by(ordering)
@@ -64,7 +63,6 @@ class ReviewDetailView(APIView):
                 serializer.save()
                 return Response(serializer.data, status=200)
             return Response({"error": "Bad Request. Der Anfrage-Body enthält ungültige Daten.."}, status=400)
-
         except ReviewModel.DoesNotExist:
             return Response({"error": "Nicht gefunden. Es wurde keine Bewertung mit der angegebenen ID gefunden."}, status=404)
 
