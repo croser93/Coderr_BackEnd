@@ -24,7 +24,11 @@ class BaseInfoSerializer(serializers.Serializer):
         return Reviews.objects.count()
     
     def get_average_rating(self, obj):
-        return Reviews.objects.aggregate(Avg('rating'))['rating__avg']
+        avg = Reviews.objects.aggregate(Avg('rating'))['rating__avg']
+        if avg:
+            return round(avg)
+        else:
+            return 0
 
     def get_business_profile_count(self, obj):
         return UserProfile.objects.filter(type='business').count()
