@@ -3,7 +3,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import OfferPostSerializer, OfferGetSerializer, OfferDetailSerializer, OfferDetailsIdSerializer
+from .serializers import OfferPostSerializer, OfferGetSerializer, OfferDetailSerializer, OfferDetailsIdSerializer, OfferDetailPatchSerializer
 from offers_app.models import OfferModel, DetailModel
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsBusinessUserOrAdmin
@@ -82,10 +82,10 @@ class OfferDetailView(APIView):
         try:
             offer = OfferModel.objects.get(pk=pk)
             self.check_object_permissions(request, offer)
-            serializer = OfferDetailSerializer(offer, data=request.data, partial=True)
+            serializer = OfferDetailPatchSerializer(offer, data=request.data, partial=True)            
             if serializer.is_valid():
                 serializer.save()
-                return Response (serializer.data, status=200)
+                return Response(serializer.data, status=200)
             return Response ({"error" : "Ungültige Anfragedaten oder unvollständige Details."}, status=400)
         except OfferModel.DoesNotExist:
             return Response ({"error" : "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
