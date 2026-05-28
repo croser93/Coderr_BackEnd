@@ -2,8 +2,7 @@ from rest_framework import serializers
 from reviews_app.models import ReviewModel
 from django.contrib.auth.models import User
 
-class ReviewSerializer(serializers.ModelSerializer):
-    
+class ReviewSerializer(serializers.ModelSerializer): 
     """
     Serializer for Review.
 

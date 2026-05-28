@@ -8,7 +8,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     """
     Serializer for add a Profile for the User.
     
-    - It is created during registration and populated with data.
+    It is created during registration and populated with data.
     
     """
     
