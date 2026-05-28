@@ -27,7 +27,6 @@ class OfferListView(generics.ListCreateAPIView):
     """
 
     queryset = OfferModel.objects.all()
-    permission_classes = [IsAuthenticated, IsBusinessUserOrAdmin]
     pagination_class = LargeResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_class = OfferFilter

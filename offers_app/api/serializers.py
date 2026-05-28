@@ -41,7 +41,7 @@ class OfferPostSerializer(serializers.ModelSerializer):
     details = DetailSerializer(many=True)
     class Meta:
         model = OfferModel
-        fields = ['title', 'image', 'description', 'details']
+        fields = ['id', 'title', 'image', 'description', 'details']
 
     def validate_details(self, value):
         if len(value) < 3:
