@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from auth_app.models import UserProfile
-from profile_app.models import ProfileModel
+from profile_app.models import Profiles
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -56,7 +56,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account.set_password(pw)
         account.save()
         UserProfile.objects.create(user=account, type=user_type)
-        ProfileModel.objects.create(user=account)
+        Profiles.objects.create(user=account)
         return account
 
 

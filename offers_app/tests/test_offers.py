@@ -5,8 +5,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework import status
 import copy
 
-from offers_app.models import OfferModel, DetailModel
-from reviews_app.models import ReviewModel
+from offers_app.models import Offers, OffersDetail
+from reviews_app.models import Reviews
 from auth_app.models import UserProfile
 
 
@@ -60,8 +60,8 @@ class OffersTest(APITestCase):
         self.business_user = User.objects.create_user(username='business_user', password='123456', email='business@test.de')
 
 
-        self.offer = OfferModel.objects.create(title='test', description='dies ist eine test beschreibung', user=self.business_user,)
-        self.detail = DetailModel.objects.create(offer=self.offer, title='test', revisions= 2 ,delivery_time_in_days= 5, price=300, features=['superduper',"test"], offer_type='basic' )
+        self.offer = Offers.objects.create(title='test', description='dies ist eine test beschreibung', user=self.business_user,)
+        self.detail = OffersDetail.objects.create(offer=self.offer, title='test', revisions= 2 ,delivery_time_in_days= 5, price=300, features=['superduper',"test"], offer_type='basic' )
         
         self.userprofile_costumer = UserProfile.objects.create(user=self.user, type='customer')
         self.userprofile_business = UserProfile.objects.create(user=self.business_user, type='business')

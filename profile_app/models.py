@@ -1,7 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-class ProfileModel(models.Model):
+class Profiles(models.Model):
+    class Meta:
+        verbose_name_plural = 'Profiles'
+
     user = models.OneToOneField(User,on_delete=models.CASCADE,  related_name='profile_detail' )
     file = models.ImageField(upload_to='profiles/', blank=True, null=True)
     location = models.CharField(max_length=100, blank=True)

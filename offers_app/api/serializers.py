@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.db.models import Min
-from offers_app.models import OfferModel, DetailModel
+from offers_app.models import Offers, OffersDetail
 
 class UserSerializer(serializers.ModelSerializer):
     """
@@ -17,7 +17,7 @@ class DetailSerializer(serializers.ModelSerializer):
     Serializer for Details in Offers. 
     """
     class Meta:
-        model = DetailModel
+        model = OffersDetail
         fields = ['id', 'title', 'revisions', 'delivery_time_in_days', 'price', 'features', 'offer_type']
 
 
@@ -33,7 +33,7 @@ class OfferPostSerializer(serializers.ModelSerializer):
     details = DetailSerializer(many=True)
 
     class Meta:
-        model = OfferModel
+        model = Offers
         fields = ['id', 'title', 'image', 'description', 'details']
 
     def validate_details(self, value):
@@ -43,9 +43,9 @@ class OfferPostSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         details_data = validated_data.pop('details')
-        offer = OfferModel.objects.create(**validated_data)
+        offer = Offers.objects.create(**validated_data)
         for detail in details_data:
-            DetailModel.objects.create(offer=offer, **detail)
+            OffersDetail.objects.create(offer=offer, **detail)
         return offer
 
 
@@ -65,7 +65,7 @@ class OfferGetSerializer(serializers.ModelSerializer):
     details = serializers.SerializerMethodField()
 
     class Meta:
-        model = OfferModel
+        model = Offers
         fields = ['id', 'user', 'title', 'image', 'description', 'created_at', 'updated_at', 'details', 'min_price', 'min_delivery_time', 'user_details']
 
     def get_min_price(self, obj):
@@ -89,7 +89,7 @@ class OfferDetailPatchSerializer(serializers.ModelSerializer):
     details = DetailSerializer(many=True, required=False)
 
     class Meta:
-        model = OfferModel
+        model = Offers
         fields = ['id', 'title', 'image', 'description', 'details']
 
     def update(self, instance, validated_data):
@@ -99,7 +99,7 @@ class OfferDetailPatchSerializer(serializers.ModelSerializer):
             for detail_data in details_data:
                 offer_type = detail_data.get('offer_type')
                 if offer_type:
-                    DetailModel.objects.filter(
+                    OffersDetail.objects.filter(
                         offer=instance, offer_type=offer_type).update(**detail_data)
         return instance
 
@@ -116,7 +116,7 @@ class OfferDetailSerializer(OfferGetSerializer):
         read_only=True, format="%Y-%m-%dT%H:%M:%S.%fZ")
     
     class Meta:
-        model = OfferModel
+        model = Offers
         fields = ['id', 'user', 'title', 'image', 'description', 'created_at', 'updated_at', 'details', 'min_price', 'min_delivery_time']
 
 
@@ -127,5 +127,5 @@ class OfferDetailsIdSerializer(DetailSerializer):
     """
 
     class Meta:
-        model = DetailModel
+        model = OffersDetail
         fields = ['id', 'title', 'revisions', 'delivery_time_in_days', 'price', 'features', 'offer_type']

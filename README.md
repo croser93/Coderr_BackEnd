@@ -90,15 +90,15 @@ Then paste the following block into the shell:
 ```python
 from django.contrib.auth.models import User
 from auth_app.models import UserProfile
-from profile_app.models import ProfileModel
+from profile_app.models import Profiles
 
 andrey = User.objects.create_user(username='andrey', password='asdasd', email='andrey@test.com', first_name='Andrey', last_name='Customer')
 UserProfile.objects.create(user=andrey, type='customer')
-ProfileModel.objects.create(user=andrey, location='Berlin')
+Profiles.objects.create(user=andrey, location='Berlin')
 
 kevin = User.objects.create_user(username='kevin', password='asdasd24', email='kevin@test.com', first_name='Kevin', last_name='Business')
 UserProfile.objects.create(user=kevin, type='business')
-ProfileModel.objects.create(user=kevin, location='Munich')
+Profiles.objects.create(user=kevin, location='Munich')
 ```
 
 | Role | Username | Password |

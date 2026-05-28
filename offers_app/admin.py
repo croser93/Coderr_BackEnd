@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import OfferModel, DetailModel
+from .models import Offers, OffersDetail
 # Register your models here.
 
-admin.site.register(OfferModel)
-admin.site.register(DetailModel)
+admin.site.register(Offers)
+admin.site.register(OffersDetail)

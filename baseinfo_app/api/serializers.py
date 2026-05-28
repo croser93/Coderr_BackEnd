@@ -1,9 +1,8 @@
 from rest_framework import serializers
-from reviews_app.models import ReviewModel
+from reviews_app.models import Reviews
 from auth_app.models import UserProfile
-from offers_app.models import OfferModel
+from offers_app.models import Offers
 from django.db.models import Avg
-
 
 class BaseInfoSerializer(serializers.Serializer):
     """
@@ -22,13 +21,13 @@ class BaseInfoSerializer(serializers.Serializer):
     offer_count = serializers.SerializerMethodField()
 
     def get_review_count(self, obj):
-        return ReviewModel.objects.count()
+        return Reviews.objects.count()
     
     def get_average_rating(self, obj):
-        return ReviewModel.objects.aggregate(Avg('rating'))['rating__avg']
+        return Reviews.objects.aggregate(Avg('rating'))['rating__avg']
 
     def get_business_profile_count(self, obj):
         return UserProfile.objects.filter(type='business').count()
 
     def get_offer_count(self, obj):
-        return OfferModel.objects.count()
+        return Offers.objects.count()

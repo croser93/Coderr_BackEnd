@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework import status
-from profile_app.models import ProfileModel
+from profile_app.models import Profiles
 from auth_app.models import UserProfile
 
 class ProfileTest(APITestCase):
@@ -25,8 +25,8 @@ class ProfileTest(APITestCase):
         self.user_profil = UserProfile.objects.create(user=self.user, type='business')
         self.user_profil_customer = UserProfile.objects.create(user=self.user_costumer, type='customer')
 
-        self.profil = ProfileModel.objects.create(user=self.user, file=None, location='Germany', tel='123456789', description='Test User', working_hours='40')
-        self.profil_customer = ProfileModel.objects.create(user=self.user_costumer, file=None, location='Germany', tel='123456789', description='Test User', working_hours='40')
+        self.profil = Profiles.objects.create(user=self.user, file=None, location='Germany', tel='123456789', description='Test User', working_hours='40')
+        self.profil_customer = Profiles.objects.create(user=self.user_costumer, file=None, location='Germany', tel='123456789', description='Test User', working_hours='40')
         
         
         self.token = Token.objects.create(user=self.user)

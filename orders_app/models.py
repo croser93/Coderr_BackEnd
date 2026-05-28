@@ -7,7 +7,10 @@ STATUS_CHOICES = [
     ('cancelled', 'cancelled'), 
 ]
 
-class OrdersModel(models.Model):
+class Orders(models.Model):
+    class Meta:
+        verbose_name_plural = 'Orders'
+
     customer_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders_as_customer')
     business_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders_as_business')
     title = models.CharField(max_length=100)

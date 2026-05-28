@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from profile_app.models import ProfileModel
+from profile_app.models import Profiles
 from django.utils import timezone
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
     class Meta:
-        model = ProfileModel
+        model = Profiles
         fields= ["user", "username", "first_name", "last_name", "file", "location", "tel", "description", "working_hours", "type", "email", "created_at"]
 
     def update(self, instance, validated_data):
@@ -40,12 +40,12 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class ProfilesBusinessSerializer(ProfileSerializer):
     class Meta:
-        model = ProfileModel
+        model = Profiles
         fields= ["user", "username", "first_name", "last_name", "file", "location", "tel", "description", "working_hours", "type"]
 
 class ProfilesCustomersSerializer(ProfileSerializer):
     uploaded_at = serializers.DateTimeField(read_only=True, allow_null=True, format="%Y-%m-%dT%H:%M:%S")
 
     class Meta:
-        model = ProfileModel
+        model = Profiles
         fields= ["user", "username", "first_name", "last_name", "file", "uploaded_at", "type"]

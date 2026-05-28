@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .serializers import OfferPostSerializer, OfferGetSerializer, OfferDetailSerializer, OfferDetailsIdSerializer, OfferDetailPatchSerializer
-from offers_app.models import OfferModel, DetailModel
+from offers_app.models import Offers, OffersDetail
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsBusinessUserOrAdmin
 from .pagination import LargeResultsSetPagination
@@ -22,7 +22,7 @@ class OfferListView(generics.ListCreateAPIView):
     - POST /api/offers/ - Post a new offer  
     Query Parameters = creator_id, min_price, max_delivery_time, ordering and search
     """
-    queryset = OfferModel.objects.all()
+    queryset = Offers.objects.all()
     permission_classes = [IsAuthenticated]
     pagination_class = LargeResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -43,7 +43,7 @@ class OfferListView(generics.ListCreateAPIView):
         if self.get_validation_param():
             raise ValidationError({'error': 'Ungültige Parameter.'})
 
-        queryset = OfferModel.objects.all()
+        queryset = Offers.objects.all()
         ordering = self.request.query_params.get('ordering')
         if ordering == 'min_price':
             queryset = queryset.order_by('details__price')
@@ -66,15 +66,15 @@ class OfferDetailView(APIView):
 
     def get(self, request, pk):
         try:
-            offer = OfferModel.objects.get(pk=pk)
+            offer = Offers.objects.get(pk=pk)
             serializer = OfferDetailSerializer(offer)
             return Response(serializer.data)
-        except OfferModel.DoesNotExist:
+        except Offers.DoesNotExist:
             return Response({"error": "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
 
     def patch(self, request, pk):
         try:
-            offer = OfferModel.objects.get(pk=pk)
+            offer = Offers.objects.get(pk=pk)
             self.check_object_permissions(request, offer)
             serializer = OfferDetailPatchSerializer(
                 offer, data=request.data, partial=True)
@@ -82,16 +82,16 @@ class OfferDetailView(APIView):
                 serializer.save()
                 return Response(serializer.data, status=200)
             return Response({"error": "Ungültige Anfragedaten oder unvollständige Details."}, status=400)
-        except OfferModel.DoesNotExist:
+        except Offers.DoesNotExist:
             return Response({"error": "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
 
     def delete(self, request, pk):
         try:
-            offer = OfferModel.objects.get(pk=pk)
+            offer = Offers.objects.get(pk=pk)
             self.check_object_permissions(request, offer)
             offer.delete()
             return Response(status=204)
-        except OfferModel.DoesNotExist:
+        except Offers.DoesNotExist:
             return Response({"error": "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
 
 
@@ -106,8 +106,8 @@ class OfferDetailsIdView(APIView):
 
     def get(self, request, pk):
         try:
-            offer_detail = DetailModel.objects.get(pk=pk)
+            offer_detail = OffersDetail.objects.get(pk=pk)
             serializer = OfferDetailsIdSerializer(offer_detail)
             return Response(serializer.data, status=200)
-        except DetailModel.DoesNotExist:
+        except OffersDetail.DoesNotExist:
             return Response({"error": "Das Angebot mit der angegebenen ID wurde nicht gefunden."}, status=404)
