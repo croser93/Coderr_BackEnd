@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from .permissions import UserOrAdmin, IsCustomerUserOrAdmin
 from .serializer import ReviewSerializer
+from .filters import ReviewFilter
 from reviews_app.models import ReviewModel
-from django.db.models import Q
 
 
 
@@ -36,9 +36,12 @@ class ReviewListView(APIView):
 
 
     def get(self, request):
-        review = ReviewModel.objects.filter(Q(reviewer=request.user) | Q(business_user=request.user))
-        serializer = ReviewSerializer(review, many=True)
-        return Response (serializer.data, status=200)
+        reviews = ReviewFilter(request.query_params, queryset=ReviewModel.objects.all()).qs
+        ordering = request.query_params.get('ordering')
+        if ordering in ['rating', 'updated_at', '-rating', '-updated_at']:
+            reviews = reviews.order_by(ordering)
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data, status=200)
 
 
 class ReviewDetailView(APIView):

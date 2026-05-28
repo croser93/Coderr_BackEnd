@@ -25,7 +25,7 @@ class OrderListView(APIView):
 
     """
 
-    permission_classes = [IsAuthenticated, IsCustomerUserOrAdmin]
+    permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
 
     def post(self, request):
