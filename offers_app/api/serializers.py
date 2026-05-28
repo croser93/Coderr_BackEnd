@@ -41,7 +41,7 @@ class OfferPostSerializer(serializers.ModelSerializer):
     details = DetailSerializer(many=True)
     class Meta:
         model = OfferModel
-        fields = ['title', 'image', 'description', 'details']
+        fields = ['id', 'title', 'image', 'description', 'details']
 
     def validate_details(self, value):
         if len(value) < 3:
@@ -59,7 +59,7 @@ class OfferGetSerializer(serializers.ModelSerializer):
     
     """
     
-    Serializer for GET Offers.
+    Serializer for GET & Delete Offers.
     
     user_details = from UserSerializer
     min_price = return the smallest price in details
@@ -87,7 +87,34 @@ class OfferGetSerializer(serializers.ModelSerializer):
             'id': detail.id,
             'url': f'/offerdetails/{detail.id}/'} for detail in obj.details.all()]
     
+class OfferDetailPatchSerializer(serializers.ModelSerializer):
+
+    """
+    
+    Serializer for Patch Offers.
+    
+    details = from DetailSerializer
+    
+    """
+    details = DetailSerializer(many=True, required=False)
+
+    class Meta:
+        model = OfferModel
+        fields = ['id', 'title', 'image', 'description', 'details']
+
+    def update(self, instance, validated_data):
+        details_data = validated_data.pop('details', None)
+        instance = super().update(instance, validated_data)
+        if details_data:
+            for detail_data in details_data:
+                offer_type = detail_data.get('offer_type')
+                if offer_type:
+                    DetailModel.objects.filter(offer=instance, offer_type=offer_type).update(**detail_data)
+        return instance
+
+    
 class OfferDetailSerializer(OfferGetSerializer):
+    
     
     """
     

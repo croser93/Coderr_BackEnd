@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from profile_app.models import ProfileModel
+from django.utils import timezone
 
 class ProfileSerializer(serializers.ModelSerializer):
     
@@ -17,8 +18,9 @@ class ProfileSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField (source='user.first_name')
     last_name = serializers.CharField (source='user.last_name')
     email = serializers.CharField (source='user.email')
-    created_at = serializers.CharField (source='user.date_joined', read_only=True)
+    created_at = serializers.DateTimeField (source='user.date_joined', read_only=True, format="%Y-%m-%dT%H:%M:%S")
     type = serializers.CharField(source='user.profile.type', read_only=True)
+
 
     class Meta:
         model = ProfileModel
@@ -26,8 +28,24 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user_data = validated_data.pop('user', {})
+        if 'file' in validated_data:
+            instance.uploaded_at = timezone.now()
         if user_data:
             for attr, value in user_data.items():
                 setattr(instance.user, attr, value)
             instance.user.save()
         return super().update(instance, validated_data)
+    
+
+
+class ProfilesBusinessSerializer(ProfileSerializer):
+       class Meta:
+        model = ProfileModel
+        fields= ["user", "username", "first_name", "last_name", "file", "location", "tel", "description", "working_hours", "type"]
+
+class ProfilesCustomersSerializer(ProfileSerializer):
+    uploaded_at = serializers.DateTimeField(read_only=True, allow_null=True, format="%Y-%m-%dT%H:%M:%S")
+
+    class Meta:
+        model = ProfileModel
+        fields= ["user", "username", "first_name", "last_name", "file", "uploaded_at", "type"]
