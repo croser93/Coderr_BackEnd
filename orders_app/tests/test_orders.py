@@ -5,10 +5,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework import status
 import copy
 
-from offers_app.models import OfferModel, DetailModel
-from reviews_app.models import ReviewModel
+from offers_app.models import Offers, OffersDetail
+from reviews_app.models import Reviews
 from auth_app.models import UserProfile
-from orders_app.models import OrdersModel
+from orders_app.models import Orders
 
 
 class OrdersTest(APITestCase):
@@ -18,9 +18,9 @@ class OrdersTest(APITestCase):
         self.business_user = User.objects.create_user(username='business_user', password='123456', email='business@test.de')
         self.admin_user = User.objects.create_superuser(username='admin', password='admin123', email='admin@test.com')
 
-        self.offer = OfferModel.objects.create(title='test', description='dies ist eine test beschreibung', user=self.business_user,)
-        self.detail = DetailModel.objects.create(offer=self.offer, title='test', revisions= 2 ,delivery_time_in_days= 5, price=300, features=['superduper',"test"], offer_type='basic' )
-        self.order = OrdersModel.objects.create(
+        self.offer = Offers.objects.create(title='test', description='dies ist eine test beschreibung', user=self.business_user,)
+        self.detail = OffersDetail.objects.create(offer=self.offer, title='test', revisions= 2 ,delivery_time_in_days= 5, price=300, features=['superduper',"test"], offer_type='basic' )
+        self.order = Orders.objects.create(
             customer_user=self.user, 
             business_user=self.business_user,
             title='Test Titel',

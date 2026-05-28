@@ -2,26 +2,28 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from auth_app.models import UserProfile
-from profile_app.models import ProfileModel
+from profile_app.models import Profiles
+
 
 class RegistrationSerializer(serializers.ModelSerializer):
     """
     Serializer for registration a new User.
-    
-    calculated fields:
-        - type  = is the choiche field fot business or customer
-        - repeated_password = check is the password even repeated_password
-        - username  = is the name from the User
-    """
 
+    calculated fields:
+    - type = is the choiche field fot business or customer
+    - repeated_password = check is the password even repeated_password
+    - username = is the name from the User
+    """
 
     TYPE_CHOICES = [
         ('customer', 'customer'),
         ('business', 'business')
     ]
-    type = serializers.ChoiceField(choices = TYPE_CHOICES)
+    type = serializers.ChoiceField(choices=TYPE_CHOICES)
     repeated_password = serializers.CharField(write_only=True)
-    username = serializers.CharField(validators=[RegexValidator(r'^[a-zA-ZäöüÄÖÜß]+$', 'Only letters and spaces allowed.')])
+    username = serializers.CharField(validators=[RegexValidator(
+        r'^[a-zA-ZäöüÄÖÜß]+$', 'Only letters and spaces allowed.')])
+
     class Meta:
         model = User
         fields = ['username', 'email', 'password', 'repeated_password', 'type']
@@ -30,14 +32,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'email': {'required': True},
         }
 
-
     def save(self, **kwargs):
         pw = self.validated_data['password']
         repeated_password = self.validated_data['repeated_password']
         email = self.validated_data['email']
         username = self.validated_data['username']
         user_type = self.validated_data['type']
-
 
         all_emails = User.objects.values_list('email', flat=True)
 
@@ -48,26 +48,25 @@ class RegistrationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'error': 'email is used'})
 
         account = User(
-            email = email,
-            username = username,
-            first_name = username
+            email=email,
+            username=username,
+            first_name=username
         )
 
         account.set_password(pw)
         account.save()
         UserProfile.objects.create(user=account, type=user_type)
-        ProfileModel.objects.create(user=account)
+        Profiles.objects.create(user=account)
         return account
-    
+
+
 class LoginSerializer(serializers.ModelSerializer):
-    
     """
     Serializer for log in.
-    
-    calculated fields:
-        - username     =   Validate the field username with DB
-        - password  =   Validate the field password with DB
 
+    calculated fields:
+    - username = Validate the field username with DB
+    - password = Validate the field password with DB
     """
 
     username = serializers.CharField(write_only=True)
@@ -75,10 +74,10 @@ class LoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = [ 'username', 'password']
+        fields = ['username', 'password']
 
     def validate(self, data):
         username = User.objects.filter(username=data['username']).first()
         if username and username.check_password(data['password']):
-            return{'user' :username}
+            return {'user': username}
         raise serializers.ValidationError({'error': 'wrong credentials'})

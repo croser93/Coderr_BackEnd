@@ -8,14 +8,14 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework import status
 
 class RegistrationView(APIView):
-    permission_classes = [AllowAny]
-    
     """
     View  for create a new User for Kanban board.
     
     Endpoints:
     - POST /api/registration/ - Create a new bUser.
     """
+    permission_classes = [AllowAny]
+    
 
     def post(self, request):
         serializer = RegistrationSerializer(data=request.data)
@@ -31,20 +31,19 @@ class RegistrationView(APIView):
                 'user_id'   :   saved_account.id
             }
         else:
-             return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=400)
         return Response(data, status=201)
     
 
 class LoginView(APIView):
-    permission_classes = [AllowAny]
-    
     """
     View for Log in in the Kanban board.
     
     Endpoints:
-
     - POST /api/login/ - The user is logged in, and the token is created.
     """
+    permission_classes = [AllowAny]
+    
     
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
@@ -60,19 +59,19 @@ class LoginView(APIView):
                 'user_id'   :   user.id
             }
         else:
-             return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=400)
         return Response(data, status=200)
     
 class LogoutView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-    
     """
     View for Log out from the Kanban board.
     
     Endpoints:
     - POST /api/logout/ - The user is logged out, and the token is deleted.
     """
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
 
     def post(self, request):
         request.user.auth_token.delete()

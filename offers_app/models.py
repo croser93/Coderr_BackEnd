@@ -2,7 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-class OfferModel(models.Model):
+class Offers(models.Model):
+
+    class Meta:
+        verbose_name_plural = 'Offers'
+
     title = models.CharField(max_length=100)
     image = models.ImageField(upload_to='offer_image/', blank=True, null=True)
     description = models.CharField(max_length=255)
@@ -10,11 +14,14 @@ class OfferModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True) 
 
-
     def __str__(self):
         return self.title
-class DetailModel(models.Model):
-    offer = models.ForeignKey(OfferModel, on_delete=models.CASCADE, related_name='details')
+class OffersDetail(models.Model):
+
+    class Meta:
+        verbose_name_plural = 'OffersDetails'
+        
+    offer = models.ForeignKey(Offers, on_delete=models.CASCADE, related_name='details')
     title = models.CharField(max_length=100)
     revisions = models.IntegerField()
     delivery_time_in_days = models.IntegerField()
