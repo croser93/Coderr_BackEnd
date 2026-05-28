@@ -18,7 +18,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField (source='user.first_name')
     last_name = serializers.CharField (source='user.last_name')
     email = serializers.CharField (source='user.email')
-    created_at = serializers.DateTimeField (source='user.date_joined', read_only=True, format="%Y-%m-%dT%H:%M:%S")
+    created_at = serializers.DateTimeField (source='user.date_joined', read_only=True)
     type = serializers.CharField(source='user.profile.type', read_only=True)
 
 

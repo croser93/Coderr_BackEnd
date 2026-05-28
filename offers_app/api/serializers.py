@@ -123,6 +123,9 @@ class OfferDetailSerializer(OfferGetSerializer):
     """
     
     id = serializers.IntegerField(read_only=True)
+    created_at = serializers.DateTimeField(read_only=True, format="%Y-%m-%dT%H:%M:%S.%fZ")
+    updated_at = serializers.DateTimeField(read_only=True, format="%Y-%m-%dT%H:%M:%S.%fZ")
+
     class Meta:
         model = OfferModel
         fields = ['id', 'user', 'title', 'image', 'description', 'created_at', 'updated_at', 'details', 'min_price', 'min_delivery_time']
