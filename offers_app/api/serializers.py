@@ -92,6 +92,12 @@ class OfferDetailPatchSerializer(serializers.ModelSerializer):
         model = Offers
         fields = ['id', 'title', 'image', 'description', 'details']
 
+    def validate_details(self, value):
+        for detail in value:
+            if 'offer_type' not in detail:
+                raise serializers.ValidationError("Ungültige Anfragedaten oder unvollständige Details.")
+        return value
+    
     def update(self, instance, validated_data):
         details_data = validated_data.pop('details', None)
         instance = super().update(instance, validated_data)
@@ -102,7 +108,7 @@ class OfferDetailPatchSerializer(serializers.ModelSerializer):
                     OffersDetail.objects.filter(
                         offer=instance, offer_type=offer_type).update(**detail_data)
         return instance
-
+    
 
 class OfferDetailSerializer(OfferGetSerializer):
     """

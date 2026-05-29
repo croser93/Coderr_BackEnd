@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.db.models import Q
-from .permissions import IsBusinessUserOrAdmin
+from .permissions import IsBusinessUserOrAdmin, IsCustomerUserOrAdmin
 from offers_app.models import OffersDetail
 
 
@@ -20,7 +20,7 @@ class OrderListView(APIView):
     - Post /api/orders/ - Post a single of order.
     """
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsCustomerUserOrAdmin]
     authentication_classes = [TokenAuthentication]
 
     def post(self, request):
