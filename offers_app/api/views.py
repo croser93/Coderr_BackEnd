@@ -23,7 +23,6 @@ class OfferListView(generics.ListCreateAPIView):
     Query Parameters = creator_id, min_price, max_delivery_time, ordering and search
     """
     queryset = Offers.objects.all()
-    # permission_classes = [IsAuthenticated]
     pagination_class = LargeResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_class = OfferFilter
