@@ -25,10 +25,13 @@ Coderr is a platform where **business users** can list their services as offers 
 | Database | SQLite (dev) |
 | Authentication | Token-based (DRF TokenAuth) |
 
-
 ---
 
-## Installation & Setup
+## Setup
+
+This project can be run in two ways: **locally without Docker** (classic Python/virtualenv setup) or **with Docker** (containerized, recommended for server deployments). Choose whichever fits your workflow.
+
+### Option A: Local Setup (without Docker)
 
 ```bash
 # 1. Clone repository
@@ -73,6 +76,63 @@ python manage.py migrate
 # 8. Start development server
 python manage.py runserver
 ```
+
+### Option B: Docker Setup (recommended for deployment)
+
+This project also ships with a `Dockerfile` and `docker-compose.yml`, so it can run as an isolated container alongside other services (e.g. on a VPS that already runs other apps).
+
+**Prerequisites:** Docker and Docker Compose installed on the host.
+
+```bash
+# 1. Clone repository
+git clone https://github.com/croser93/Coderr_BackEnd.git
+```
+```bash
+# 2. go to project
+cd Coderr_BackEnd
+```
+
+```bash
+# 3. Create a .env file based on the provided template
+cp .env.example .env
+```
+
+Then edit `.env` and fill in real values:
+
+```
+DJANGO_SECRET_KEY=your-generated-secret-key
+DJANGO_DEBUG=False
+DJANGO_ALLOWED_HOSTS=your-domain.com,localhost,127.0.0.1
+```
+
+A secure secret key can be generated with:
+
+```bash
+python3 -c "import secrets; print(secrets.token_urlsafe(50))"
+```
+
+```bash
+# 4. Build the image and start the container
+docker compose up -d --build
+```
+
+```bash
+# 5. Run database migrations inside the running container
+docker exec -it coderr-backend python manage.py migrate
+```
+
+```bash
+# 6. Create an admin user inside the running container
+docker exec -it coderr-backend python manage.py createsuperuser
+```
+
+The backend is now reachable at `http://localhost:8000` (or via whatever reverse proxy / tunnel routes traffic to that port).
+
+**Notes on the Docker setup:**
+- The SQLite database is stored in a Docker **volume** (`coderr_data`), so data survives container rebuilds and restarts.
+- The container restarts automatically (`restart: unless-stopped`) unless manually stopped.
+- Secrets (`SECRET_KEY`, etc.) are never baked into the image; they're injected at runtime via `.env`, which is excluded from both Git (`.gitignore`) and the Docker build context (`.dockerignore`).
+
 ---
 
 ## Demo Users
@@ -84,6 +144,8 @@ To use the platform right away, you can create two demo users via the Django she
 ```bash
 python manage.py shell
 ```
+
+*(When running via Docker, use `docker exec -it coderr-backend python manage.py shell` instead.)*
 
 Then paste the following block into the shell:
 
@@ -118,7 +180,11 @@ Coderr_BackEnd/
 ├── offers_app/         # Offers and offer packages
 ├── orders_app/         # Order management
 ├── reviews_app/        # Review system
-└── baseinfo_app/       # Platform statistics
+├── baseinfo_app/       # Platform statistics
+├── Dockerfile          # Container image definition
+├── docker-compose.yml  # Container orchestration (service, volume, env)
+├── .dockerignore       # Files excluded from the Docker build context
+└── .env.example        # Template for required environment variables
 ```
 
 ---
