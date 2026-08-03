@@ -30,47 +30,47 @@ Coderr is a platform where **business users** can list their services as offers 
 
 ## Installation & Setup
 
+### 1. Clone repository
 ```bash
-# 1. Clone repository
 git clone https://github.com/croser93/Coderr_BackEnd.git
 ```
+### 2. Go to Projekt
 ```bash
-# 2. go to Projekt
 cd Coderr_BackEnd
 ```
 
+### 3. Create and activate virtual environment
 ```bash
-# 3. Create and activate virtual environment
 python -m venv .venv
 ```
 
+### 4. Activate the virtual environment only Linux/Mac!
 ```bash
-# 4.Activate the virtual environment only Linux/Mac!
-source env/bin/activate
+source .venv/Scripts/activate
 ```
 
+### 4. Activate the virtual environment only Windows!
 ```bash
-# 4.Activate the virtual environment only Windows!
-env\Scripts\activate
+.venv/Scripts/activate
 ```
 
+### 5. Install dependencies from requirements.txt
 ```bash
-# 5. Install dependencies from requirements.txt
 pip install -r requirements.txt
 ```
 
+### 6. Creates migration files
 ```bash
-# 6. Creates migration files
 python manage.py makemigrations
 ```
 
+### 7. Run database migrations
 ```bash
-# 7. Run database migrations
 python manage.py migrate
 ```
 
+### 8. Start development server
 ```bash
-# 8. Start development server
 python manage.py runserver
 ```
 ---
